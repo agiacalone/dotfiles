@@ -1,0 +1,53 @@
+;;;; This file is not required, but contains examples of commands you
+;;;; might want to use in your personal configuration file (~/.tfrc).
+;;;; Feel free to customize these commands to your own tastes.
+
+;;; Set Terminal
+/set TERM=screen
+;/set TERM=xterm-color
+;/set TERM=vt220
+
+;;; Enable windowing mode.
+/visual on
+
+;;; Enable paging
+/more on
+
+;;; Enable suppression of introductory MUD text.
+/quiet on
+
+;;; Disable old-style slash interpretation
+;;; I recommend this unless you have old macros containing multiple slashes.
+/set oldslash=off
+
+;;; Set the time to local PST/PDT
+
+;;; Disable the Clock
+;/clock off
+
+;;; Set the Status Line
+;/set status_fields=@more:8:Br :1 @world :1 @read:6 :1 @active:11 :1 @log:5 :1 @mail:6 :1 insert:6 :1 @clock:5
+/set status_fields=@more:8:Br :1 @world :1 @read:6 :1 @active:11 :1 @log:5 :1 @mail:6 :1 insert:6
+
+;/set time_format=%I:%M %Z
+;/set TZ=PST8PDT
+
+;;; Keybindings
+/def key_pgdn = /dokey_hpage
+/def key_pgup = /dokey_hpageback
+
+
+;; Settings for MCP Support
+;/load ~/.tf/mcp21.tf
+;/load ~/.tf/mcp.tf
+;/load ~/.tf/mcp-negotiate.tf
+;/load ~/.tf/simpleedit.tf
+;/load ~/.tf/local-edit.tf
+
+
+;/def key_up = /dokey_recallb
+;/def key_down = /dokey_recallf
+;/def -b'^A' = /key_up
+;/def -b'^B' = /key_down
+
+/test addworld("SDFMud", "tiny.moo", "localhost", "4000")

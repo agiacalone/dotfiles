@@ -1,0 +1,44 @@
+# .screenrc
+# By Anthony Giacalone
+# anthonyg@sdf.org
+
+backtick 1 0 60 /arpa/af/a/anthonyg/bin/mcount.sh -s
+backtick 2 0 60 /arpa/af/a/anthonyg/bin/sdfproc.sh
+
+shell /usr/pkg/bin/zsh  # Set the user shell
+startup_message off     # Turns off the startup message
+msgwait 1 		        # Set message timeout to one second
+autodetach on 		    # Autodetach session on hangup instead of term screen
+defscrollback 30000 	# Use a 30000-line scrollback buffer
+altscreen on
+# idle 900 lockscreen 	# Will lock the screen after 900 seconds
+
+# Some terminal info - not currently used
+#termcapinfo xterm* ti@:te@:XT  #mouse scrolling
+#term xterm-color
+#term screen-256color
+term screen
+
+# Monoitor message for activity
+defmonitor on   # always use window monitoring
+activity  "activity in %n (%t) [%w:%s]~"
+bell_msg   "bell     in %n (%t) [%w:%s]~"
+msgwait 0   # Don't actually show the messages, but show the flags
+
+# BBOARD editor with g
+bind g exec /sys/sdf/bin/bbeditor
+
+# Top caption line
+# Currently: [process] [mail] [sdfproc]
+caption always "%{= kg}[ %{G}%2`%{g} ][ %{y}%1`%{g} ]%=[ %{Y}%l%{g} ]"
+
+# Process Description code for caption line
+# [ %{m}%h%5{g} ]"   
+
+# Bottom caption line
+# Currently: [server] [windows] [date/time]
+hardstatus alwayslastline
+
+hardstatus string '%{= kg}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%%?%?%= %{g}][%{B} %D %M %d %{W}%c %{g}]'
+
+#hardstatus string '%{= kg}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %D %M %d %{W}%c %{g}]'

@@ -1,0 +1,7 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =5
+let g:netrw_dirhist_1='/lib/modules/3.0.0-15-generic/updates/drivers/net/wireless/iwlwifi'
+let g:netrw_dirhist_2='/etc/init.d'
+let g:netrw_dirhist_3='/home/anthony/SparkleShare/.tmp'
+let g:netrw_dirhist_4='/home/anthony/.newsbeuter'
+let g:netrw_dirhist_5='/home/anthony/.mutt'

@@ -1,0 +1,217 @@
+% .slrnrc File
+
+set realname "Anthony Giacalone"
+set username "agiacalone
+set hostname "gmail.com"
+set replyto "agiacalone@gmail.com"
+
+set server_object "nntp"
+set post_object "nntp"
+
+% SERVER to NEWSRC mapping
+%server "hsdndev.harvard.edu" ".jnewrc-hsdndev"
+%server "news.uni-stuttgart.de" ".jnewsrc-stuttgart"
+%server "news.eternal-september.org" ".jnewsrc"
+
+% The next line is for those servers that require a password. 
+%nnrpaccess "HOSTNAME" "USERNAME" "PASSWORD"
+nnrpaccess "news.eternal-september.org" "agiacalone" "PASSWORDHERE"
+
+% Name of signature file to use
+%set signature ".signature"
+
+% Use msmtp to send email responses:
+set sendmail_command "/usr/bin/msmtp -t"
+
+set editor_command "vim '+set tw=72' +%d '%s'"
+
+% If non-zero, slrn will not allow you to post articles that contain
+% non-quoted lines whose length exceeds 80 characters. 
+set reject_long_lines 1
+
+% The quote string will be used when following up/replying
+set quote_string ">"
+
+% This regular expression defines lines that are consider to be quoted lines.
+% It says that any lines beginning with 0-2 spaces followed by a either
+% a >, <, :, |, or = character is a quoted line.
+ignore_quotes "^ ? ?[><:=|]"
+
+% This sets the follow-up and reply strings. Here, the following format
+% specifiers are recognized: 
+% %d:date, %r:real name, %f:email address, %s:subject, 
+% %m:msgid, %n:newsgroups, %%: percent 
+set followup_string "On %d, %r <%f> wrote:"
+set reply_string "In %n, you wrote:" 
+
+% WWW browser to use. The 'U' key in article mode searches the current article
+% for a URL and then calls X browser if slrn appears to be run in X windows
+% and non_Xbrowser otherwise. Note: The second Xbrowser form assumes that
+% firefox is already running.
+set non_Xbrowser "lynx '%s'"
+set Xbrowser "firefox '%s' &"
+%set Xbrowser "firefox -remote 'openURL(%s)' &"
+
+% If 0, do not beep terminal. If 1, send audible beep. If 2, send only
+% visible bell. If 3, send both. 
+set beep 1
+
+% If non-zero, slrn will automatically un-subscribe new groups.
+% The default is 0.
+set unsubscribe_new_groups 1
+
+% Enable xterm mouse support: 1 to enable, 0 to disable
+set mouse 1
+
+% Set to 1 to have slrn scroll by full page instead of by line.
+set scroll_by_page 0
+
+% if 1, display author realname, if 0, display full address
+% OUTDATED
+%set display_author_realname 1
+
+% change the display to show the date
+header_display_format 0 "%F%B%-5S [%10r]:%t%49s %-19g[%17d]"
+
+% If 0, do not sort. If 1, perform threading. If 2, sort by subject
+% If 3, thread then sort result by subject
+% If 4, sort by score. If 5, thread then sort by score.
+% If 6, sort by score and subject
+% If 7, thread, then sort by score and subject
+% If 8, sort by date with most recent first
+% If 9, thread, then sort by date with most recent first
+% If 10, sort by date with most recent last
+% If 11, thread then sort by date with most recent last 
+set sorting_method 9
+%set display_score 0
+
+% If non-zero, slrn will read the active file when starting. This may lead to
+% faster startup times IF your network connection is fast. If it slow,
+% DO NOT USE IT. If you can, I recommend setting it to 1. 
+set read_active 1
+
+% What to wrap when wrapping an article:
+% 0 or 4 ==> wrap body
+% 1 or 5 ==> wrap headers, body
+% 2 or 6 ==> wrap quoted text, body
+% 3 or 7 ==> wrap headers, quoted text, body
+% The higher number indicates that every article will be automatically
+% wrapped. 
+set wrap_flags 4
+
+% Maximum number of articles to read before slrn will prompt. Default is 100. 
+% Set this to zero to turn of prompting. 
+set query_read_group_cutoff 100
+
+% Numes of lines to read from the server between percentage counter updates 
+% This number will vary with the speed of the connection to your server 
+set lines_per_update 100
+
+% Draw cursor bar ala tin instead of slrn "->" cursor?
+%set display_cursor_bar 0
+
+% Set to 1 to have slrn scroll by full page instead of by line.
+%set scroll_by_page 0
+
+% Should color be used to indicate the score of an article?
+% (0) scores do not influence colors (1) scores are colored by their value
+% (2) subjects are colored by score  (3) both are colored by score
+set color_by_score 3
+
+% If non-zero, the subjects of unread articles are highlighted
+set highlight_unread_subjects 1
+
+% If non-zero, URLs are highlighted.
+set highlight_urls 1
+
+% Enables blinking in monochrome mode and allows bright backgrounds in some
+% color terminals:
+set use_blink 1
+
+% These settings are used for color terminals:
+color article       "lightgray"	    "black"
+color author        "magenta"       "black"
+color boldtext      "brightblue"    "black"	"bold"
+color box           "black"		    "white"
+color cursor		"brightgreen"	"black"
+color date          "lightgray"     "black"  
+color description   "lightgray"     "black"
+color error         "red"           "black" "blink"
+color frame         "yellow"        "blue"
+color from_myself   "brightmagenta"	"black"	"bold"
+color group         "lightgray"     "black"	"bold"
+color grouplens_display	"lightgray"	"black"
+color header_name   "green"		"black"	"bold"
+color header_number "green"		"black"
+color headers       "brightcyan"	"black"
+color neg_score     "green"		"black"
+color pos_score     "blue"		"black"
+color high_score    "red"		"black"	"bold"
+color italicstext   "magenta"	"black"	"bold"
+color menu          "yellow"	"blue"
+color menu_press    "lightgray"	"yellow"
+color message       "lightgray"	"black"
+color normal        "lightgray"	"black"
+color pgpsignature  "lightgray"	"black"
+color quotes        "red"		"black"
+color quotes1       "magenta"	"black"
+color quotes2       "brown"		"black"
+color quotes3       "brown"		"black"
+color quotes4       "brown"		"black"
+color quotes5       "brown"		"black"
+color quotes6       "brown"		"black"
+color quotes7       "brown"		"black"
+color response_char "green"		"black"	"bold"
+color signature     "red"		"black"
+color selection     "yellow"	"blue"	"bold"
+color status        "yellow"	"blue"
+color subject       "lightgray"	"black"
+color thread_number "lightgray"	"black"	"bold"
+color tilde         "green"		"black"	"bold"
+color tree          "red"		"black"	"bold"
+color underlinetext "cyan"		"black"	"underline"
+color url           "white"		"black"	"bold"
+color verbatim      "green"		"black"
+
+% These attributes are for terminals that cannot display color:
+mono article        "none"
+mono author         "none"
+mono boldtext       "bold"
+mono cursor         "bold"      "reverse"
+mono date		"none"
+mono description	"none"
+mono error		"blink"
+mono frame		"reverse"
+mono from_myself	"bold"
+mono group		"bold"
+mono grouplens_display	"none"
+mono header_name	"bold"
+mono header_number	"none"
+mono headers		"none"
+mono high_score		"bold"
+mono italicstext	"bold"
+mono menu		"reverse"
+mono menu_press		"none"
+mono neg_score		"none"
+mono normal		"none"
+mono pgpsignature	"none"
+mono pos_score		"reverse"
+mono quotes		"none"
+mono quotes1		"none"
+mono quotes2		"none"
+mono quotes3		"none"
+mono quotes4		"none"
+mono quotes5		"none"
+mono quotes6		"none"
+mono quotes7		"none"
+mono response_char	"bold"
+mono selection		"bold"  
+mono signature		"none"
+mono status		"reverse"
+mono subject		"none"
+mono thread_number	"bold"
+mono tilde		"bold"
+mono tree		"none"
+mono underlinetext	"underline"
+mono url		"bold"
+mono verbatim	        "none"
