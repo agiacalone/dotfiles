@@ -44,7 +44,7 @@ set spoolfile = "imaps://imap.gmail.com:993/INBOX"
 set postponed = "imaps://imap.gmail.com/[Gmail]/Drafts"
 #set record = "imaps://imap.gmail.com/[Gmail]/Sent Mail" #Gmail autocopies
 set smtp_url = "smtp://agiacalone@smtp.gmail.com:587/"
-set smtp_pass = "btklbjtltomkvtvx"
+set smtp_pass = "[PASSWORDHERE]"
 
 # remote folders
 set header_cache = "~/.mutt/cache/headers"
