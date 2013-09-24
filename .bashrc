@@ -29,22 +29,22 @@ if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
 fi
 
 # Change the terminal to 256 colors
-#if [ -n "$COLORTERM" ]; then
-#  export TERM=xterm-256color
-#fi
- 
-if [ "$TERM" = "xterm" ]; then
+if [ -n "$COLORTERM" ]; then
   export TERM=xterm-256color
 fi
 
-if [ "$TERM" = "vt220" ]; then
-    export TERM=vt220
-    elif [ -n "$TMUX" ]; then
-        export TERM=screen-256color
-fi
+#if ["$TERM" = "xterm" ]; then
+#  export TERM=xterm-256color
+#fi
 
-# for tmux: export 256color
-#[ -n "$TMUX" ] && export TERM=screen-256color
+#if [ "$TERM" = "vt220" ]; then
+#    export TERM=vt220
+#    elif [ -n "$TMUX" ]; then
+#        export TERM=screen-256color
+#fi
+
+#for tmux: export 256color
+[ -n "$TMUX" ] && export TERM=screen-256color-bce
 
 #export TERM="xterm-color"
 
