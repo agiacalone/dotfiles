@@ -44,7 +44,7 @@ fi
 #fi
 
 #for tmux: export 256color
-[ -n "$TMUX" ] && export TERM=screen-256color-bce
+[ -n "$TMUX" ] && export TERM=screen-256color-bce && color_prompt=yes
 
 #export TERM="xterm-color"
 
