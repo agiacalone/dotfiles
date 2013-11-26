@@ -115,6 +115,9 @@ if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
 
+# Add the user's bin folder to $PATH
+export PATH="${PATH}:~/bin"
+
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
@@ -148,7 +151,7 @@ export PATH=$PATH:$GOBIN
 NNTPSERVER='news.eternal-september.org' && export NNTPSERVER
 
 # My custom aliases
-alias ttytter='$HOME/bin/ttytter -vcheck -ssl'
+alias ttytter='$HOME/bin/ttytter'
 alias sl='ls'
 alias ruby='ruby1.9.3'
 alias irb='irb1.9.3'
