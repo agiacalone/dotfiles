@@ -1,7 +1,8 @@
-color normal       color35      color232
+#color normal       color35      color232
+color normal       default      default
 color indicator    color226     default
 color tree         color23      default 
-color status       color48     color235
+color status       color48      color235
 color error        color30      default 
 color message      color50      default 
 color signature    color70      default 
@@ -11,9 +12,9 @@ color tilde        color130     default
 color markers      color138     default 
 
 #mono bold          reverse
-color bold         color173 color191
+color bold          color173 color191
 #mono underline     reverse
-color underline    color48  color191
+color underline     color48  color191
 
 color quoted        color107     default             # quoted text
 color quoted1       color66      default
@@ -32,49 +33,50 @@ color body          green default  "(^| )_[-a-z0-9_]+_[,.?]?[\n]"
 color body          red   default  "(^| )\\*[-a-z0-9*]+\\*[,.?]?[ \n]"
 color body          green default  "(^| )_[-a-z0-9_]+_[,.?]?[ \n]"
 color index         color202     default  ~F         # Flagged
-color index         color39     default  ~N          # New
-color index         color39     color234  ~O         
+color index         color39      default  ~N         # New
+color index         color39      color234 ~O         
 color index         color229     color22  ~T         # Tagged
 color index         color240     default  ~D         # Deleted
 
 ######################
 
 #mono body	reverse		'^(subject):.*'
-#color body	brightwhite magenta	'^(subject):.*'
+color body	brightwhite magenta	'^(subject):.*'
 #mono body	reverse		'[[:alpha:]][[:alnum:]-]+:'
 #color body	black cyan	'[[:alpha:]][[:alnum:]-]+:'
 
 ######################
 # header
 
-color hdrdefault color30    color233 
-color header	color132    color233    '^date:'
-color header	color153    color233    '^(to|cc|bcc):'
-color header	color120    color233    '^from:'
-color header	color178    color233    '^subject:'
-color header    color31     color233    '^user-agent:'
-color header	color29     color233    '^reply-to:'
+#color hdrdefault color30    color233 
+color hdrdefault color30    default
+color header	color132    default     '^date:'
+color header	color153    default     '^(to|cc|bcc):'
+color header	color120    default     '^from:'
+color header	color178    default     '^subject:'
+color header    color31     default     '^user-agent:'
+color header	color29     default     '^reply-to:'
 
 #color header	magenta default '^(status|lines|date|received|sender|references):'
 #color header	magenta default '^(pr|mime|x-|user|return|content-)[^:]*:'
 #color header	brightyellow default '^content-type:'
 #color header	magenta default '^content-type: *text/plain'
-# color header	brightgreen default '^list-[^:]*:'
+#color header	brightgreen default '^list-[^:]*:'
 #mono  header    bold	            '^(subject):.*$'
 #color header	brightcyan default	'^(disposition)'
 #color header	green default	'^(mail-)?followup'
 #color header	white default	'^reply'
 #color header	brightwhite default	'^(resent)'
-# color header	brightwhite default	'^from:'
+#color header	brightwhite default	'^from:'
 
 ######################
 # spam
 
 ### html
-#color index blue default '~b "<(img|a |html|body)"'
+color index blue default '~b "<(img|a |html|body)"'
 
 ### china spam
-#color index brightred black '~h "^(content-type:| +).*charset=\"?(big5|gb2312|SHIFT.JIS|euc.kr|windows.125[^2]|iso.[0-9]+.jp|koi[^       ;"])"'
+color index brightred black '~h "^(content-type:| +).*charset=\"?(big5|gb2312|SHIFT.JIS|euc.kr|windows.125[^2]|iso.[0-9]+.jp|koi[^       ;"])"'
 
 ### sex
 #color index brightyellow black "~b '(p$E+n$I+$S|sex|er$E+ct$I+$O+n|p$O+rn$O+|v$I+$A+gr|c$I+$A+$L+$I+$S)'"
@@ -86,6 +88,6 @@ color header	color29     color233    '^reply-to:'
 #color index white black "~b '(ph$A+rm$A+cy|m$E+d$I+c$A+t$I+$O+n|pr$E+scr$I+pt$I+$O+n|d$I+$S+c$O+$U+nt|p$I+$L+$S|v$A+$L+$I+$U+m|v$I+c$O+d$I+n)'"
 
 
-#mono index	bold '~h "^content-type: *(multipart/(mixed|signed|encrypted)|application/)"'
-#color index	green black '~h "^content-type: *multipart/(signed|encrypted)"'
+mono index	bold '~h "^content-type: *(multipart/(mixed|signed|encrypted)|application/)"'
+color index	green black '~h "^content-type: *multipart/(signed|encrypted)"'
 
