@@ -1,4 +1,4 @@
-set t_Co=257			"set vim to use 256 colors
+set t_Co=256			"set vim to use 256 colors
 
 filetype plugin on
 set nocompatible		"use vim defaults
@@ -27,10 +27,18 @@ set whichwrap=b,s,h,l,<,>,[,]	"move freely between files
 set autoindent			"always set autoindent on
 set smartindent			"smart indent
 "set noautoindent		"turn off autoindent
-syntax on				"syntax highlighting on
+set background=dark     "force the background color
+syntax enable			"syntax highlighting on
+set bs=2                "backspace fix for some systems
+
+" Color schemes section`
 "colorscheme elflord
 "colorscheme wombat
 "colorscheme xoria256
 colorscheme inkpot
 "colorscheme gardener
 "colorscheme simple-dark
+
+"For solarized colors
+"let g:solarized_termcolors=256
+"colorscheme solarized
