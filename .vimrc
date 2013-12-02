@@ -31,7 +31,7 @@ set background=dark     "force the background color
 syntax enable			"syntax highlighting on
 set bs=2                "backspace fix for some systems
 
-" Color schemes section`
+" Color schemes section
 "colorscheme elflord
 "colorscheme wombat
 "colorscheme xoria256
