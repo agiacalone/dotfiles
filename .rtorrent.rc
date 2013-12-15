@@ -1,0 +1,6 @@
+port_range = 10560-10599
+port_random = yes
+encryption = allow_incoming, try_outgoing, enable_retry
+check_hash = yes
+peer_exchange = no
+
