@@ -1,50 +1,61 @@
-set hostname = 'gmail.com'
 set ispell = '/usr/bin/ispell'
 set alias_file = ~/.mutt/aliases
 set sort_alias = alias
 set reverse_alias = yes
 source $alias_file
-# set folder = '~/'
-# set from = '(empty)'
 set print=ask-yes
 set noconfirmappend
 set nobeep
 set hdrs
 # set save_empty = yes
 
-# Mailboxes
-mailboxes !
-mailboxes =gmail
+# Define variables
+set my_gmail_imap_pass=''
+set my_gmail_smtp_pass=''
+set my_sdf_imap_pass=''
+set my_sdf_smtp_pass=''
 
 # Mailbox hook (move mail to these boxes)
+account-hook . 'unset imap_user imap_pass' # unset first
+account-hook 'imaps://agiacalone@imap.gmail.com:993' "\
+              set imap_user='agiacalone' imap_pass=$my_gmail_imap_pass "
+account-hook 'iamps://anthonyg@mx.sdf.org:993' "\
+              set imap_user='anthonyg' imap_pass=$my_sdf_imap_pass "
 
-# Colors - old: see bottom
-#color attachment brightmagenta default
-#color error      brightred    default
-#color hdrdefault red          default
-#color indicator  brightyellow red
-#color markers    brightcyan   default
-#color message    brightcyan   default
-#color normal     default      default
-#color quoted     brightblue   default
-#color search     default      green
-#color signature  red          default
-#color status     yellow       blue
-#color tilde      magenta      default
-#color tree       magenta      default
+# Automatically log into this mailbox on start
+set spoolfile="imaps://agiacalone:$my_gmail_imap_pass@imap.gmail.com:993/INBOX"
 
-### Gmail configuration ###
-set certificate_file = "~/.mutt/certificates"
-set from = "agiacalone@gmail.com"
-set realname = "Anthony Giacalone"
-set imap_user = "agiacalone@gmail.com"
-set imap_pass = "adialpkupleeqqpb"
-set folder = "imaps://imap.gmail.com:993"
-set spoolfile = "imaps://imap.gmail.com:993/INBOX"
-set postponed = "imaps://imap.gmail.com/[Gmail]/Drafts"
-#set record = "imaps://imap.gmail.com/[Gmail]/Sent Mail" #Gmail autocopies
-set smtp_url = "smtp://agiacalone@smtp.gmail.com:587/"
-set smtp_pass = "adialpkupleeqqpb"
+# Folders, mailboxes, and folder hooks
+# GMail Setup
+set folder="imaps://agiacalone@imap.gmail.com:993"
+mailboxes =INBOX =[Gmail]/Drafts =[Gmail]/'Sent Mail' =[Gmail]/Spam
+folder-hook 'imaps://agiacalone@imap.gmail.com:993' "\
+       set  folder=imaps://agiacalone@imap.gmail.com:993 "\
+            postponed=+[Gmail]/Drafts \
+            record=+[Gmail]/'Sent Mail' \
+            smtp_url=smtps://agiacalone@smtp.gmail.com \
+            smtp_pass=$my_gmail_smtp_pass \
+            #signature=~/.mutt/user1.sig \
+            from='Anthony Giacalone <agiacalone@gmail.com> ' \
+            realname='Anthony Giacalone' "
+
+# SDF Mail Setup
+set folder="imaps://anthonyg@mx.sdf.org:993"
+mailboxes =INBOX =Drafts =Sent =Spam
+folder-hook 'imaps://anthonyg@mx.sdf.org:993' "\
+       set  folder=imaps://anthonyg@mx.sdf.org:993 "\
+                   postponed=+Drafts \
+                   record=+Sent \
+                   smtp_url=smtps://anthonyg@mx.sdf.org:587 \
+                   smtp_user='anthonyg.sdf.org' \
+                   smtp_pass=$my_sdf_smtp_pass \
+                  #signature=~/.mutt/user1.sig \
+                   from='Anthony Giacalone <anthonyg@sdf.org> ' \
+                   realname='Anthony Giacalone' "
+
+# Macros to make life easier
+macro index <esc>1 "y2<return><return>" # ESC+1 takes to first INBOX
+macro index <esc>2 "y6<return><return>" # ESC+2 takes to second
 
 # remote folders
 set header_cache = "~/.mutt/cache/headers"
@@ -56,15 +67,11 @@ set header_cache = ~/.mutt/cache/headers
 set message_cachedir = ~/.mutt/cache/bodies
 set certificate_file = ~/.mutt/certificates
 
-# SMTP settings
-my_hdr From: agiacalone@gmail.com
-my_hdr Reply-To: agiacalone@gmail.com
-my_hdr Return-Path: agiacalone@gmail.com
-set signature=$HOME/.signature-gm
-
-# Miscellanious Gmail settings
+# Miscellanious settings
 set move = no # stop asking to move read messages to mbox
 set imap_keepalive = 900
+set timeout=60      # check mail every 60 seconds
+set mail_check=1
 
 # My editor settings
 set editor='vim + -c "set textwidth=72" -c "set wrap" -c "set nocp" -c "?^$"'
