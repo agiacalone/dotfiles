@@ -1,0 +1,110 @@
+set hostname = 'gmail.com'
+set ispell = '/usr/bin/ispell'
+set alias_file = ~/.mutt/aliases
+set sort_alias = alias
+set reverse_alias = yes
+source $alias_file
+# set folder = '~/'
+# set from = '(empty)'
+set print=ask-yes
+set noconfirmappend
+set nobeep
+set hdrs
+# set save_empty = yes
+
+# Mailboxes
+mailboxes !
+mailboxes =gmail
+
+# Mailbox hook (move mail to these boxes)
+
+# Colors - old: see bottom
+#color attachment brightmagenta default
+#color error      brightred    default
+#color hdrdefault red          default
+#color indicator  brightyellow red
+#color markers    brightcyan   default
+#color message    brightcyan   default
+#color normal     default      default
+#color quoted     brightblue   default
+#color search     default      green
+#color signature  red          default
+#color status     yellow       blue
+#color tilde      magenta      default
+#color tree       magenta      default
+
+### Gmail configuration ###
+set certificate_file = "~/.mutt/certificates"
+set from = "agiacalone@gmail.com"
+set realname = "Anthony Giacalone"
+set imap_user = "agiacalone@gmail.com"
+set imap_pass = ""
+set folder = "imaps://imap.gmail.com:993"
+set spoolfile = "imaps://imap.gmail.com:993/INBOX"
+set postponed = "imaps://imap.gmail.com/[Gmail]/Drafts"
+#set record = "imaps://imap.gmail.com/[Gmail]/Sent Mail" #Gmail autocopies
+set smtp_url = "smtp://agiacalone@smtp.gmail.com:587/"
+set smtp_pass = ""
+
+# remote folders
+set header_cache = "~/.mutt/cache/headers"
+set message_cachedir = "~/.mutt/cache/bodies"
+#set trash = "imaps://imap.gmail.com/[Gmail]/Trash"
+
+# local folders 
+set header_cache = ~/.mutt/cache/headers
+set message_cachedir = ~/.mutt/cache/bodies
+set certificate_file = ~/.mutt/certificates
+
+# SMTP settings
+my_hdr From: agiacalone@gmail.com
+my_hdr Reply-To: agiacalone@gmail.com
+my_hdr Return-Path: agiacalone@gmail.com
+set signature=$HOME/.signature-gm
+
+# Miscellanious Gmail settings
+set move = no # stop asking to move read messages to mbox
+set imap_keepalive = 900
+
+# My editor settings
+set editor='vim + -c "set textwidth=72" -c "set wrap" -c "set nocp" -c "?^$"'
+
+# View HTML mail
+auto_view text/html                                  # views html automatically
+alternative_order text/plain text/enriched text/html # save html for last
+
+# Header stuff
+ignore "Authentication-Results:"
+ignore "DomainKey-Signature:"
+ignore "DKIM-Signature:"
+hdr_order Date From To Cc
+
+unignore from: date subject to cc
+unignore x-mailing-list: posted-to:
+unignore x-mailer:
+
+# For better looks
+set markers=no  # don't put '+' at the beginning of wrapped lines
+set pager_index_lines = 7  # how large is the index window?
+set sort = 'threads'
+set sort_aux = 'last-date-received'
+set imap_check_subscribed
+
+# Special keybindings
+bind editor <space> noop
+bind attach <return> view-mailcap
+macro index gi "<change-folder>=INBOX<enter>" "Go to inbox"
+macro index ga "<change-folder>=[Gmail]/All Mail<enter>" "Go to all mail"
+macro index gs "<change-folder>=[Gmail]/Sent Mail<enter>" "Go to Sent Mail"
+macro index gd "<change-folder>=[Gmail]/Drafts<enter>" "Go to drafts"
+macro index gr "<group-reply>" "Group reply (reply all)"
+macro index,pager A "<save-message>+[Gmail]/All Mail<enter>" "Move message to the archive"
+macro index S "<save-message>+[Gmail]/Spam<enter>" "Mark message as spam"
+
+# Colors
+# source `case $TERM in\
+#             *256color) echo '~/.mutt/colors/colors256-dark'; break ;;\
+#             *)        echo '~/.mutt/colors/basic-colors'; break ;;\
+#        esac`
+
+source ~/.mutt/colors/colors256-dark
