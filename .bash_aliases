@@ -1,5 +1,4 @@
 # My custom aliases
-alias ttytter='$HOME/bin/ttytter'
 alias sl='ls'
 alias ruby='ruby1.9.3'
 alias irb='irb1.9.3'
