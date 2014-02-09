@@ -1,0 +1,12 @@
+# Included reminder files
+include /home/anthony/SparkleShare/ss-sdf/reminders/todo
+include /home/anthony/SparkleShare/ss-sdf/reminders/school
+include /home/anthony/SparkleShare/ss-sdf/reminders/geek-holidays
+include /home/anthony/SparkleShare/ss-sdf/reminders/birthdays
+include /home/anthony/SparkleShare/ss-sdf/reminders/home
+include /home/anthony/SparkleShare/ss-sdf/reminders/work
+
+# Set up variables
+SET Week_2 8
+SET Week_2 15
+REM Oct 2 2012 AT 18:00 DURATION 1:00 MSG 
