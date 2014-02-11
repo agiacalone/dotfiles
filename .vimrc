@@ -30,6 +30,13 @@ set smartindent			"smart indent
 set background=dark     "force the background color
 syntax enable			"syntax highlighting on
 set bs=2                "backspace fix for some systems
+set spell spelllang=en_us
+let mapleader=","       "change leader key from '\' to ','
+
+" For LaTeX support
+filetype plugin indent on
+set grepprg=grep\ -nH\ $*
+let g:tex_flavor = "latex"
 
 " Color schemes section
 "colorscheme elflord
