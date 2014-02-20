@@ -57,7 +57,7 @@ set beep 1
 
 % If non-zero, slrn will automatically un-subscribe new groups.
 % The default is 0.
-set unsubscribe_new_groups 0
+set unsubscribe_new_groups 1
 
 % Enable xterm mouse support: 1 to enable, 0 to disable
 set mouse 1
