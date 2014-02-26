@@ -81,6 +81,8 @@ macro index gi "<change-folder>=INBOX<enter>"   "Go to inbox"
 macro index gr "<group-reply>"                  "Group reply (reply all)"
 macro index gs "<change-folder>=Sent<enter>"    "Go to sent"
 macro index gd "<change-folder>=Drafts<enter>"  "Go to drafts"
+macro index ga "<change-folder>=Saved_Mail<enter>" "Go to saved"
+macro index,pager A "<save-message>+Saved_Mail<enter>" "Save mail"
 
 # Colors
 # source `case $TERM in\
