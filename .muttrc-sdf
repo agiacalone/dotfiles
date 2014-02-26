@@ -1,0 +1,91 @@
+set hostname = 'sdf.org'
+set ispell = '/usr/bin/ispell'
+set alias_file = ~/.mutt/aliases
+set sort_alias = alias
+set reverse_alias = yes
+source $alias_file
+# set folder = '~/'
+# set from = '(empty)'
+set print=ask-yes
+set noconfirmappend
+set nobeep
+set hdrs
+# set save_empty = yes
+
+# Mailboxes
+mailboxes !
+mailboxes =INBOX
+
+# Mailbox hook (move mail to these boxes)
+
+### mail settings configuration ###
+set certificate_file = "~/.mutt/certificates"
+set from = "anthonyg@sdf.org"
+set realname = "Anthony Giacalone"
+set imap_user = "anthonyg"
+set imap_pass = ""
+set folder = "imaps://mx.sdf.org:993"
+set spoolfile = "imaps://mx.sdf.org:993/INBOX"
+set postponed = "imaps://mx.sdf.org/Drafts"
+set smtp_url = "smtp://anthonyg.sdf.org@mx.sdf.org:587/"
+set smtp_pass = ""
+set smtp_authenticators = "cram-md5"
+
+# remote folders
+set header_cache = "~/.mutt/cache/headers"
+set message_cachedir = "~/.mutt/cache/bodies"
+
+# local folders 
+set header_cache = ~/.mutt/cache/headers
+set message_cachedir = ~/.mutt/cache/bodies
+set certificate_file = ~/.mutt/certificates
+
+# SMTP settings
+my_hdr From: anthonyg@sdf.org
+my_hdr Reply-To: anthonyg@sdf.org
+my_hdr Return-Path: anthonyg@sdf.org
+set signature=$HOME/.signature-gm
+
+# Miscellanious settings
+set move = no # stop asking to move read messages to mbox
+set imap_keepalive = 900
+
+# My editor settings
+set editor='vim + -c "set textwidth=72" -c "set wrap" -c "set nocp" -c "?^$"'
+
+# View HTML mail
+auto_view text/html                                  # views html automatically
+alternative_order text/plain text/enriched text/html # save html for last
+
+# Header stuff
+ignore "Authentication-Results:"
+ignore "DomainKey-Signature:"
+ignore "DKIM-Signature:"
+hdr_order Date From To Cc
+
+unignore from: date subject to cc
+unignore x-mailing-list: posted-to:
+unignore x-mailer:
+
+# For better looks
+set markers=no  # don't put '+' at the beginning of wrapped lines
+set pager_index_lines = 7  # how large is the index window?
+set sort = 'threads'
+set sort_aux = 'last-date-received'
+set imap_check_subscribed
+
+# Special keybindings
+bind editor <space> noop
+bind attach <return> view-mailcap
+macro index gi "<change-folder>=INBOX<enter>"   "Go to inbox"
+macro index gr "<group-reply>"                  "Group reply (reply all)"
+macro index gs "<change-folder>=Sent<enter>"    "Go to sent"
+macro index gd "<change-folder>=Drafts<enter>"  "Go to drafts"
+
+# Colors
+# source `case $TERM in\
+#             *256color) echo '~/.mutt/colors/colors256-dark'; break ;;\
+#             *)        echo '~/.mutt/colors/basic-colors'; break ;;\
+#        esac`
+
+source ~/.mutt/colors/colors256-dark
