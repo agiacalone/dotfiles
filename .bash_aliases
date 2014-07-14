@@ -2,6 +2,7 @@
 alias ttytter='$HOME/bin/ttytter'
 alias sl='ls'
 alias ls='ls -h --color'
+alias lls='ls -lh --color'
 alias ruby='ruby1.9.3'
 alias irb='irb1.9.3'
 alias python='python3'
