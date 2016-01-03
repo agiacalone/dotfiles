@@ -2,6 +2,7 @@ set t_Co=256			"set vim to use 256 colors
 
 filetype plugin on
 set nocompatible		"use vim defaults
+set noshowmode
 set ls=2				"always show status line
 set tabstop=4			"numbers of spaces of tab character
 set shiftwidth=4		"number of spaces to (auto)indent
@@ -22,8 +23,7 @@ set modeline			"last lines in document sets vim mode
 set modelines=3			"number of lines checked for modelines
 set shortmess=atI		"abbreviate messages
 set nostartofline		"don't jump to the first character when paging
-set wrap				"word wrap functionality
-set linebreak           "wrap lines at end of screen
+set wrap				"word wrap on
 set whichwrap=b,s,h,l,<,>,[,]	"move freely between files
 set autoindent			"always set autoindent on
 set smartindent			"smart indent
@@ -31,15 +31,13 @@ set smartindent			"smart indent
 set background=dark     "force the background color
 syntax enable			"syntax highlighting on
 set bs=2                "backspace fix for some systems
-set spell spelllang=en_us
-let mapleader=","       "change leader key from '\' to ','
-set number              "line numbers
-set cryptmethod=blowfish
 
-" For LaTeX support
-filetype plugin indent on
-set grepprg=grep\ -nH\ $*
-let g:tex_flavor = "latex"
+" Code for airline
+execute pathogen#infect()
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#left_sep = ' '
+let g:airline#extensions#tabline#left_alt_sep = '|'
+let g:airline_powerline_fonts = 1
 
 " Color schemes section
 "colorscheme elflord
