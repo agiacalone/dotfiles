@@ -8,16 +8,22 @@ sudo apt-get dist-upgrade -y
 sudo apt-get install -y netcat nmap build-essential bison flex bison-doc gawk git
 
 # Install programming languages
-sudo apt-get install -y gfortran fort77 erlang swi-prolog clojure
+sudo apt-get install -y gfortran fort77 erlang swi-prolog clojure fp-ide gcj-4.9-jre-headless clojure1.6 ghc ghc-doc haskell-doc alex happy
+
+# Install some libraries
+sudo apt-get install -y libgl1-mesa-dev libglc-dev freeglut3-dev libedit-dev libglw1-mesa libglw1-mesa-dev
+
+# Install some admin tools
+sudo apt-get install -y parted gparted xfsprogs reiserfsprogs reiser4progs jfsutils dmraid gpart xfsdump hfsprogs secure-delete
 
 # Install editors
-sudo apt-get install -y vim emacs nano
+sudo apt-get install -y vim emacs nano hexedit
 
 # Install shell tools
-sudo apt-get install -y mc tmux screen arj rar unrar gpm p7zip-full p7zip-rar
+sudo apt-get install -y mc tmux screen arj rar unrar gpm p7zip-full p7zip-rar htop
 
 # Install network tools
-sudo apt-get install -y netcat openssh-server tftp mosh
+sudo apt-get install -y netcat openssh-server tftp mosh oidentd
 
 # Install mail clients
 sudo apt-get install -y alpine mutt postfix mailutils
@@ -33,6 +39,9 @@ sudo apt-get install -y newsbeuter slrn
 
 # Install chat programs
 sudo apt-get install -y pidgin pidgin-otr finch irssi weechat irssi-scripts znc tf5 tintin++
+
+# Install X programs
+sudo apt-get install -y hexchat pan 
 
 # Install games
 sudo apt-get install -y bsdgames bsdgames-nonfree nethack-console crawl frotz inform inform-docs dosbox wine
