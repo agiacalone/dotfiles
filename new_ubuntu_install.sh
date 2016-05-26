@@ -42,3 +42,22 @@ sudo apt-get install -y msttcorefonts ttf-liberation ttf-dejavu texlive-full
 
 # Install LAMP server
 sudo apt-get install -y lamp-server^
+
+# Generate the SSH key
+ssh-keygen
+
+# Display the public key for copying
+cat ~/.ssh/id_rsa.pub
+read -p "Copy the public key to Github and then press [Enter] to continue..."
+
+# Make the directories and copy stuff from Github
+mkdir ~/bin
+mkdir ~/git
+
+git clone git@github.com:agiacalone/dotfiles.git ~/git/dotfiles
+
+# First copy the non-dot files, then the dot files
+cp -R ~/git/dotfiles/* ~/
+cp -R ~/git/dotfiles/.* ~/
+
+# The initial installation setup should be complete!
