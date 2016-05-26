@@ -1,5 +1,5 @@
 # My custom aliases
-alias ttytter='$HOME/bin/ttytter'
+alias ttytter='oysttyer'
 alias sl='ls'
 alias ls='ls -h --color'
 alias lls='ls -lh --color'
