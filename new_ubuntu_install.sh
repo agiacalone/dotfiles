@@ -53,7 +53,7 @@ read -p "Copy the public key to Github and then press [Enter] to continue..."
 # Make the directories and copy stuff from Github
 mkdir ~/bin
 mkdir ~/git
-
+mkdir ~/git/dotfiles
 git clone git@github.com:agiacalone/dotfiles.git ~/git/dotfiles
 
 # First copy the non-dot files, then the dot files
