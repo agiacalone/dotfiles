@@ -41,13 +41,16 @@ sudo apt-get install -y newsbeuter slrn
 sudo apt-get install -y pidgin pidgin-otr finch irssi weechat irssi-scripts znc tf5 tintin++
 
 # Install X programs
-sudo apt-get install -y hexchat pan 
+sudo apt-get install -y hexchat pan liferea
 
 # Install games
 sudo apt-get install -y bsdgames bsdgames-nonfree nethack-console crawl frotz inform inform-docs dosbox wine
 
 # Install fonts
 sudo apt-get install -y msttcorefonts ttf-liberation ttf-dejavu texlive-full
+
+# Install music programs
+sudo apt-get install -y pianobar pithos vlc
 
 # Install LAMP server
 sudo apt-get install -y lamp-server^
