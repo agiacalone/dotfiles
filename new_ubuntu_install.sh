@@ -17,7 +17,7 @@ sudo apt-get install -y libgl1-mesa-dev libglc-dev freeglut3-dev libedit-dev lib
 sudo apt-get install -y parted gparted xfsprogs reiserfsprogs reiser4progs jfsutils dmraid gpart xfsdump hfsprogs secure-delete
 
 # Install editors
-sudo apt-get install -y vim emacs nano hexedit
+sudo apt-get install -y vim emacs nano hexedit sc
 
 # Install shell tools
 sudo apt-get install -y mc tmux screen arj rar unrar gpm p7zip-full p7zip-rar htop sshfs
