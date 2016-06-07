@@ -5,7 +5,7 @@ sudo apt-get update
 sudo apt-get dist-upgrade -y
 
 # Install dev tools
-sudo apt-get install -y netcat nmap build-essential bison flex bison-doc gawk git
+sudo apt-get install -y netcat nmap build-essential bison flex bison-doc gawk git moreutils
 
 # Install programming languages
 sudo apt-get install -y gfortran fort77 erlang swi-prolog clojure fp-ide gcj-4.9-jre-headless clojure1.6 ghc ghc-doc haskell-doc alex happy
