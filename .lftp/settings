@@ -1,0 +1,16 @@
+set cmd:at-exit "set > ~/.lftp/settings"
+set cmd:prompt "lftp \\S\\? \\u\\@\\h:\\w> "
+set cmd:term-status/*rxvt* "\\e[11;0]\\e]2;\\T\\007\\e[11]"
+set cmd:term-status/*screen* \\e_\\T\\e\\
+set cmd:term-status/*xterm* "\\e[11;0]\\e]2;\\T\\007\\e[11]"
+set color:use-color true
+set dns:order "inet6 inet"
+set file:charset UTF-8
+set ftp:auto-sync-mode "icrosoft FTP Service|MadGoat|MikroTik"
+set ftp:ssl-force true
+set ftp:sync-mode/ftp.idsoftware.com on
+set ftp:sync-mode/ftp.microsoft.com on
+set ftp:sync-mode/sunsolve.sun.com on
+set ssl:verify-certificate no
+set xfer:max-redirections 10
+set xfer:verify-command /usr/local/Cellar/lftp/4.6.5/share/lftp/verify-file
