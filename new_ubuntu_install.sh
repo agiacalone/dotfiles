@@ -23,7 +23,7 @@ sudo apt-get install -y vim emacs nano hexedit sc
 sudo apt-get install -y mc tmux screen arj rar unrar gpm p7zip-full p7zip-rar htop sshfs moreutils
 
 # Install network tools
-sudo apt-get install -y netcat openssh-server tftp mosh oidentd
+sudo apt-get install -y netcat openssh-server tftp mosh oidentd lftp
 
 # Install mail clients
 sudo apt-get install -y alpine mutt postfix mailutils
