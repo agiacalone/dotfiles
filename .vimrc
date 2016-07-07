@@ -32,6 +32,17 @@ set background=dark     "force the background color
 syntax enable			"syntax highlighting on
 set bs=2                "backspace fix for some systems
 
+" Set fonts for gVIM
+if has("gui_running")
+    if has("gui_gtk2")
+        set guifont=Inconsolata\ 12
+    elseif has("gui_macvim")
+        set guifont=Menlo\ Regular:h14
+    elseif has("gui_win32")
+        set guifont=Consolas:h11:cANSI
+    endif
+endif
+
 " Code for airline
 execute pathogen#infect()
 let g:airline#extensions#tabline#enabled = 1
