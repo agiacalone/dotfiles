@@ -24,6 +24,7 @@ set modelines=3			"number of lines checked for modelines
 set shortmess=atI		"abbreviate messages
 set nostartofline		"don't jump to the first character when paging
 set wrap				"word wrap on
+set linebreak           "keep words intact on the same line when breaking
 set whichwrap=b,s,h,l,<,>,[,]	"move freely between files
 set autoindent			"always set autoindent on
 set smartindent			"smart indent
@@ -37,7 +38,8 @@ if has("gui_running")
     if has("gui_gtk2")
         set guifont=Inconsolata\ 12
     elseif has("gui_macvim")
-        set guifont=Menlo\ Regular:h14
+        "set guifont=Source\ Code\ \Pro\ for\ Powerline:h14
+        set guifont=Droid\ Sans\ Mono\ Dotted\ for\ Powerline:h14
     elseif has("gui_win32")
         set guifont=Consolas:h11:cANSI
     endif
@@ -54,9 +56,14 @@ let g:airline_powerline_fonts = 1
 "colorscheme elflord
 "colorscheme wombat
 "colorscheme xoria256
-colorscheme inkpot
+"colorscheme inkpot
 "colorscheme gardener
 "colorscheme simple-dark
+"colorscheme Tomorrow-Night-Eighties
+"colorscheme Tomorrow-Night-Bright
+"colorscheme ironman
+"colorscheme coffee
+colorscheme matrix
 
 "For solarized colors
 "let g:solarized_termcolors=256
