@@ -28,6 +28,7 @@ set linebreak           "keep words intact on the same line when breaking
 set whichwrap=b,s,h,l,<,>,[,]	"move freely between files
 set autoindent			"always set autoindent on
 set smartindent			"smart indent
+set number              "add line numbers on the left
 "set noautoindent		"turn off autoindent
 set background=dark     "force the background color
 syntax enable			"syntax highlighting on
