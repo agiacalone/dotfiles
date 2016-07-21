@@ -1,0 +1,4 @@
+location:Orange,CA
+fetch_cmd:ftp -V -o -
+units:imperial
+daylight:true
