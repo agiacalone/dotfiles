@@ -20,7 +20,8 @@ sudo apt-get install -y parted gparted xfsprogs reiserfsprogs reiser4progs jfsut
 sudo apt-get install -y vim emacs nano hexedit sc
 
 # Install shell tools
-sudo apt-get install -y mc tmux screen arj rar unrar gpm p7zip-full p7zip-rar htop sshfs moreutils
+sudo apt-get install -y mc tmux screen arj rar unrar gpm p7zip-full
+p7zip-rar htop sshfs moreutils ddate
 
 # Install network tools
 sudo apt-get install -y netcat openssh-server tftp mosh oidentd lftp
