@@ -1,130 +1,87 @@
-# .zshrc: ZSH config file
+# If you come from bash you might have to change your $PATH.
+# export PATH=$HOME/bin:/usr/local/bin:$PATH
 
-###################################################################
-#                           Tautologies                           #
-###################################################################
+# Path to your oh-my-zsh installation.
+  export ZSH=/Users/anthony/.oh-my-zsh
 
-# Aliases
-alias dir='dir --color'  # Colors are pretty...
-alias g++='g++ -g -Wall -W -Wcast-qual -Wcast-align -Wsign-compare -Wredundant-decls -Wfloat-equal  -Wmissing-format-attribute -Wshadow -static '
-alias lock='clear && lock -p -t 120'  # Nice to lock the screen when I'm away
-alias pd=pushd
-alias bd=popd
-alias kterm='pkill -9 -t'
-alias pterm='pkill -STOP -t'
-alias cterm='pkill -CONT -t'
-#alias sl='ls'  # I get lazy and type fast sometimes. Hate the train!!
-alias sl='echo "Type ls, not sl! Do you really want the train back??"'
-alias -g PG='|grep '
-alias xclock='xclock -d -chime -update 1 &'
-alias slrn='slrn -n'
-alias ttytter='ttytter -vcheck' # CLI Twitter client
-alias sendtweet='ttytter -status=' # Send tweets without running the prog
-alias pine='alpine'  # Because old habits die hard.
-alias udate='date -u'  # Nice, fast way to see GMT
-alias unixdate='date +%s'  # Love UNIX time!!!
-alias xcalc='xcalc -rpn &' # If I need a calculator, RPN is the way to go
-alias ls='ls -C'
-alias tt++='tt++ ~/.ttrc'  # TinTin++ - Mud client
-alias slrn-grc='slrn -h news.grc.com -f .jnewsrc-grc -i .slrnrc-grc'
-alias slrn-old='slrn -h nntp.olduse.net -f .jnewsrc-olduse -i .slrnrc-olduse'
-alias slrn-es='slrn -h news.eternal-september.org -f .jnewsrc-es -i .slrnrc-es'
+# Set name of the theme to load. Optionally, if you set this to "random"
+# it'll load a random theme each time that oh-my-zsh is loaded.
+# See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
+ZSH_THEME="agnoster"
 
-# Exports
-#export ARGV0="Hey, no peeking!"
-export EDITOR=/usr/pkg/bin/vim  # VIM is the preferred editor. Or ed. ;)
-export PAGER=/usr/bin/less  # Less is more. Remember that!
-export TZ=US/Pacific  # Timezone setting
-export PATH=/usr/pkg/libexec/git-core/:${PATH}  # git path setting
-export PATH=${PATH}:$HOME/bin:.
+# Uncomment the following line to use case-sensitive completion.
+# CASE_SENSITIVE="true"
 
-if [[ $TERM == 'xterm-256color' ]]; then
-    export TERM="xterm-color"
-fi
+# Uncomment the following line to use hyphen-insensitive completion. Case
+# sensitive completion must be off. _ and - will be interchangeable.
+# HYPHEN_INSENSITIVE="true"
 
-# Some sufixes
-alias -s net=links
-alias -s org=links
-alias -s edu=links
-alias -s com=links
+# Uncomment the following line to disable bi-weekly auto-update checks.
+# DISABLE_AUTO_UPDATE="true"
 
-# Set Backspace
-#stty erase '^H' echoe  # Only for stupid, MS Windows programs
-stty erase '^?' echoe   # Most used - preferred setting
+# Uncomment the following line to change how often to auto-update (in days).
+# export UPDATE_ZSH_DAYS=13
 
-# Enable history
-HISTFILE=~/.zsh_hist
-HISTSIZE=1000
-SAVEHIST=1000
+# Uncomment the following line to disable colors in ls.
+# DISABLE_LS_COLORS="true"
 
-# Script to determine architecture of current machine
-#case `uname -m`
-# alpha) export PATH=$PATH:$HOME/alpha_bin ;;
-# amd64) export PATH=$PATH:$HOME/amd64_bin ;;
-#esac
+# Uncomment the following line to disable auto-setting terminal title.
+# DISABLE_AUTO_TITLE="true"
 
-# Set key bindings to vi (The way, the truth, and the light)
-bindkey -v 
+# Uncomment the following line to enable command auto-correction.
+# ENABLE_CORRECTION="true"
 
-###################################################################
-#                      Added for GNU screen                       #
-###################################################################
-if [[ $TERM == "screen" ]]; then
-	# Set extension (current job; trunc to cut out path)
-	TAB_TITLE_EXEC='$cmd[1]:t'
+# Uncomment the following line to display red dots whilst waiting for completion.
+# COMPLETION_WAITING_DOTS="true"
 
-	# Set the prompt (EOPath)
-	TAB_HARDSTATUS_PROMPT='$SHELL:t'
-	# Set extension (current job + args; trunc to cut out path)
-	TAB_HARDSTATUS_EXEC='$cmd'
+# Uncomment the following line if you want to disable marking untracked files
+# under VCS as dirty. This makes repository status check for large repositories
+# much, much faster.
+# DISABLE_UNTRACKED_FILES_DIRTY="true"
 
-# Send info to GNU screen:
-function screen_set() {
-	# Set the %t title
-	print -nR $'\033k'$1$'\033'\\\
-	# Set the hardstatus %h of each tab
-	print -nR $'\033]0;'$2$'\a'
-}
+# Uncomment the following line if you want to change the command execution time
+# stamp shown in the history command output.
+# The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
+# HIST_STAMPS="mm/dd/yyyy"
 
-function preexec() {
-	local -a cmd; cmd=(${(z)1}) #cmd string
-	eval "tab_title=$TAB_TITLE_EXEC" 
-	eval "tab_hardstatus=$TAB_HARDSTATUS_PROMPT\:$TAB_HARDSTATUS_EXEC"
-	screen_set $tab_title $tab_hardstatus
-}
+# Would you like to use another custom folder than $ZSH/custom?
+# ZSH_CUSTOM=/path/to/new-custom-folder
 
-function precmd() {
-	# Enable next line for time on right side
-	#export RPS1="[$(print '%{\e[1;31m%}')%T %?$(print '%{\e[0m%}')]"
-	eval "tab_title=$TAB_TITLE_EXEC" 
-	eval "tab_hardstatus=$TAB_HARDSTATUS_PROMPT$TAB_HARDSTATUS_EXEC"
-	screen_set $tab_title $tab_hardstatus
-}
-	
+# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
+# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
+# Example format: plugins=(rails git textmate ruby lighthouse)
+# Add wisely, as too many plugins slow down shell startup.
+plugins=(git osx)
 
-###################################################################
-#                        Added for xterm                          #
-###################################################################
+source $ZSH/oh-my-zsh.sh
 
-elif [[ $TERM == "xterm-color" ]]; then
-    TAB_TITLE_EXEC='$cmd[1]:t'
-	# Right prompt($RPS1)
-	function precmd {
-		# Enable next line for time on right side prompt
-		#export RPS1="[$(print '%{\e[1;31m%}')%T %?$(print '%{\e[0m%}')]"
-	}
+# User configuration
 
-	# Left prompt($PS1)
- 	export PS1="$(print '%{\e[1;32m%}')%m@%c$(print '%{\e[0m%}')%# "
+# export MANPATH="/usr/local/man:$MANPATH"
 
-# Humor for the startup shell
-echo ""
-/usr/pkg/games/fortune
-echo ""
+# You may need to manually set your language environment
+# export LANG=en_US.UTF-8
 
-# Check to see if there are any urgent messages
-/usr/pkg/bin/notes -c
-echo ""
-fi
+# Preferred editor for local and remote sessions
+# if [[ -n $SSH_CONNECTION ]]; then
+#   export EDITOR='vim'
+# else
+#   export EDITOR='mvim'
+# fi
 
-# end .zshrc
+# Compilation flags
+# export ARCHFLAGS="-arch x86_64"
+
+# ssh
+# export SSH_KEY_PATH="~/.ssh/rsa_id"
+
+# Set personal aliases, overriding those provided by oh-my-zsh libs,
+# plugins, and themes. Aliases can be placed here, though oh-my-zsh
+# users are encouraged to define aliases within the ZSH_CUSTOM folder.
+# For a full list of active aliases, run `alias`.
+#
+# Example aliases
+# alias zshconfig="mate ~/.zshrc"
+# alias ohmyzsh="mate ~/.oh-my-zsh"
+
+source ~/.bash_aliases
