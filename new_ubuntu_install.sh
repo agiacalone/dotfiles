@@ -49,6 +49,7 @@ sudo apt-get install -y bsdgames bsdgames-nonfree nethack-console crawl frotz in
 
 # Install fonts
 sudo apt-get install -y msttcorefonts ttf-liberation ttf-dejavu texlive-full
+curl -L https://github.com/hbin/top-programming-fonts/raw/master/install.sh | bash
 
 # Install music programs
 sudo apt-get install -y pianobar pithos vlc
