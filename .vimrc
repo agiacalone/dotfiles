@@ -33,18 +33,15 @@ set number              "add line numbers on the left
 set background=dark     "force the background color
 syntax enable			"syntax highlighting on
 set bs=2                "backspace fix for some systems
+colorscheme inkpot
 
 " Set fonts for gVIM
 if has("gui_running")
-    if has("gui_gtk2")
-        set guifont=Inconsolata\ 12
-    elseif has("gui_macvim")
-        "set guifont=Source\ Code\ \Pro\ for\ Powerline:h14
-        set guifont=Droid\ Sans\ Mono\ Dotted\ for\ Powerline:h14
-        set guioptions-=r
-    elseif has("gui_win32")
-        set guifont=Consolas:h11:cANSI
-    endif
+    set guifont=Source\ Code\ Pro\ 12
+    set guioptions-=r
+    set guioptions-=m
+    set guioptions-=T
+    colorscheme simple-dark
 endif
 
 " Code for airline
@@ -65,7 +62,7 @@ let g:airline_powerline_fonts = 1
 "colorscheme Tomorrow-Night-Bright
 "colorscheme ironman
 "colorscheme coffee
-colorscheme matrix
+"colorscheme matrix
 
 "For solarized colors
 "let g:solarized_termcolors=256
