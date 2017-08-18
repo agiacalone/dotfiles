@@ -1,6 +1,6 @@
 set t_Co=256			"set vim to use 256 colors
 
-filetype plugin on
+filetype off
 set nocompatible		"use vim defaults
 set noshowmode
 set ls=2				"always show status line
@@ -43,6 +43,15 @@ if has("gui_running")
     set guioptions-=T
     colorscheme simple-dark
 endif
+
+" Code for vundle
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+Plugin 'VundleVim/Vundle.vim'
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
+call vundle#end()
+filetype plugin indent on
 
 " Code for airline
 execute pathogen#infect()
