@@ -38,23 +38,6 @@ set termguicolors
 syntax enable			"syntax highlighting on
 set bs=2                "backspace fix for some systems
 
-" Set fonts for gVIM
-if has("gui_running")
-    set guifont=Source\ Code\ Pro\ 12
-    set guioptions-=r
-    set guioptions-=m
-    set guioptions-=T
-    colorscheme simple-dark
-    if has("gui_macvim")
-        set guifont=Source\ Code\ Pro:h14
-        set transparency=5
-    endif
-endif
-
-if has ("gui_vimr")
-    "colorscheme dracula
-endif
-
 " Code for vundle
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
@@ -86,6 +69,29 @@ let g:airline_theme='quantum'
 " Code for Gruvbox
 let g:gruvbox_termcolors = '256'
 let g:gruvbox_contrast_dark = 'hard'
+
+" Code for Quantum
+let g:quantum_black=1
+"let g:quantum_italics=1
+
+" Set fonts for gVIM
+if has("gui_running")
+    set guifont=Source\ Code\ Pro\ 14
+    set guioptions-=r
+    set guioptions-=m
+    set guioptions-=T
+    "colorscheme simple-dark
+    if has("gui_macvim")
+        set guifont=Source\ Code\ Pro:h14
+        set transparency=5
+        let g:quantum_italics=1
+    endif
+endif
+
+if has ("gui_vimr")
+    "colorscheme dracula
+    let g:quantum_italics=1
+endif
 
 " Color schemes section
 "colorscheme elflord
