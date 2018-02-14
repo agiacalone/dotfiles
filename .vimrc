@@ -26,8 +26,8 @@ set nostartofline		"don't jump to the first character when paging
 set wrap				"word wrap on
 set linebreak           "keep words intact on the same line when breaking
 set textwidth=0         "turn off hard wrapping
-set spell               "automatic spell checking
-set nolist              "enable line break option
+"set spell               "automatic spell checking
+"set nolist              "enable line break option
 set whichwrap=b,s,h,l,<,>,[,]	"move freely between files
 set autoindent			"always set autoindent on
 set smartindent			"smart indent
@@ -36,7 +36,6 @@ set number              "add line numbers on the left
 set background=dark     "force the background color
 syntax enable			"syntax highlighting on
 set bs=2                "backspace fix for some systems
-colorscheme inkpot
 
 " Set fonts for gVIM
 if has("gui_running")
@@ -52,7 +51,7 @@ if has("gui_running")
 endif
 
 if has ("gui_vimr")
-    colorscheme simple-dark
+    "colorscheme dracula
 endif
 
 " Code for vundle
@@ -65,6 +64,11 @@ Plugin 'lesliev/vim-inform7'
 Plugin 'flazz/vim-colorschemes'
 Plugin 'godlygeek/tabular'
 Plugin 'plasticboy/vim-markdown'
+Plugin 'morhetz/gruvbox'
+Plugin 'dracula/vim'
+Plugin 'trusktr/seti.vim'
+Plugin 'reedes/vim-thematic'
+Plugin 'reedes/vim-pencil'
 call vundle#end()            " required
 filetype plugin indent on    " required
 
@@ -73,6 +77,12 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#left_sep = ' '
 let g:airline#extensions#tabline#left_alt_sep = '|'
 let g:airline_powerline_fonts = 1
+let g:airline_section_x = '%{PencilMode()}'
+"let g:airline_theme='gruvbox'
+
+" Code for Gruvbox
+let g:gruvbox_termcolors = '256'
+let g:gruvbox_contrast_dark = 'hard'
 
 " Color schemes section
 "colorscheme elflord
@@ -86,6 +96,9 @@ let g:airline_powerline_fonts = 1
 "colorscheme ironman
 "colorscheme coffee
 "colorscheme matrix
+colorscheme gruvbox
+"colorscheme dracula
+"colorscheme seti
 
 "For solarized colors
 "let g:solarized_termcolors=256
