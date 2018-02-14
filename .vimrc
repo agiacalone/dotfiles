@@ -34,6 +34,7 @@ set smartindent			"smart indent
 set number              "add line numbers on the left
 "set noautoindent		"turn off autoindent
 set background=dark     "force the background color
+set termguicolors
 syntax enable			"syntax highlighting on
 set bs=2                "backspace fix for some systems
 
@@ -69,6 +70,7 @@ Plugin 'dracula/vim'
 Plugin 'trusktr/seti.vim'
 Plugin 'reedes/vim-thematic'
 Plugin 'reedes/vim-pencil'
+Plugin 'tyrannicaltoucan/vim-quantum'
 call vundle#end()            " required
 filetype plugin indent on    " required
 
@@ -79,6 +81,7 @@ let g:airline#extensions#tabline#left_alt_sep = '|'
 let g:airline_powerline_fonts = 1
 let g:airline_section_x = '%{PencilMode()}'
 "let g:airline_theme='gruvbox'
+let g:airline_theme='quantum'
 
 " Code for Gruvbox
 let g:gruvbox_termcolors = '256'
@@ -96,9 +99,10 @@ let g:gruvbox_contrast_dark = 'hard'
 "colorscheme ironman
 "colorscheme coffee
 "colorscheme matrix
-colorscheme gruvbox
+"colorscheme gruvbox
 "colorscheme dracula
 "colorscheme seti
+colorscheme quantum
 
 "For solarized colors
 "let g:solarized_termcolors=256
