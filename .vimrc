@@ -1,5 +1,5 @@
 set t_Co=256			"set vim to use 256 colors
-
+set term=xterm-256color
 filetype off
 set nocompatible		"use vim defaults
 set noshowmode
@@ -34,7 +34,7 @@ set smartindent			"smart indent
 set number              "add line numbers on the left
 "set noautoindent		"turn off autoindent
 set background=dark     "force the background color
-set termguicolors
+set termguicolors       "allow the editor to use truecolors
 syntax enable			"syntax highlighting on
 set bs=2                "backspace fix for some systems
 
@@ -66,9 +66,12 @@ let g:airline_section_x = '%{PencilMode()}'
 "let g:airline_theme='gruvbox'
 let g:airline_theme='quantum'
 
+" Code for Solarized Colorscheme
+"let g:solarized_termcolors=256
+
 " Code for Gruvbox
-let g:gruvbox_termcolors = '256'
-let g:gruvbox_contrast_dark = 'hard'
+"let g:gruvbox_termcolors = '256'
+"let g:gruvbox_contrast_dark = 'hard'
 
 " Code for Quantum
 let g:quantum_black=1
@@ -83,13 +86,12 @@ if has("gui_running")
     "colorscheme simple-dark
     if has("gui_macvim")
         set guifont=Source\ Code\ Pro:h14
-        set transparency=5
+        "set transparency=5
         let g:quantum_italics=1
     endif
 endif
 
 if has ("gui_vimr")
-    "colorscheme dracula
     let g:quantum_italics=1
 endif
 
@@ -109,7 +111,4 @@ endif
 "colorscheme dracula
 "colorscheme seti
 colorscheme quantum
-
-"For solarized colors
-"let g:solarized_termcolors=256
 "colorscheme solarized
