@@ -7,7 +7,9 @@
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="agnoster"
+#ZSH_THEME="robbyrussell"
+#ZSH_THEME="pygmalion"
+ZSH_THEME="cypher"
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -51,7 +53,7 @@ ZSH_THEME="agnoster"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git osx)
+plugins=(git osx dotenv colorize)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -83,5 +85,10 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-
+NNTPSERVER='news.eternal-september.org' && export NNTPSERVER
+path+=(/Users/anthony/Library/Android/sdk/platform-tools)
+path+=(/usr/local/opt/go/libexec/bin)
+path+=(/Users/anthony/bin)
 source ~/.bash_aliases
+
+export PATH="/usr/local/sbin:$PATH"
