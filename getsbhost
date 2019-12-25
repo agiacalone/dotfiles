@@ -1,0 +1,8 @@
+# Get the latest hostfile from Stephen Black
+wget -v -O ~/hostfile/hosts https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts
+
+# Merge the host file into an ipv6 compliant file
+mergeIpv4Ipv6
+
+# Copy the file to the location where Gas Mask can read it. Might need a refresh
+cp ~/hostfile/hosts-ipv4-ipv6 ~/Library/Gas\ Mask/Local/Stephen\ Black\ ipv6.hst
