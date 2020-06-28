@@ -50,7 +50,9 @@ brew install rsync
 brew install svn
 brew install unzip
 brew install unrar
+brew install tmux
 brew install vim
+brew install neovim
 brew install htop
 brew install newsboat
 brew install neomutt
@@ -90,5 +92,11 @@ git clone git@github.com:agiacalone/dotfiles.git ~/git/dotfiles
 # First copy the non-dot files, then the dot files
 cp -R ~/git/dotfiles/* ~/
 cp -R ~/git/dotfiles/.* ~/
+
+# Install vundle for vim
+git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+
+# Install tpm for tmux
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 # The initial installation setup should be complete!
