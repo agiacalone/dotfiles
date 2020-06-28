@@ -50,8 +50,7 @@ brew install rsync
 brew install svn
 brew install unzip
 brew install unrar
-brew install vim --override-system-vi
-brew install macvim --override-system-vim --custom-system-icons
+brew install vim
 brew install htop
 brew install newsboat
 brew install neomutt
@@ -68,6 +67,8 @@ brew install lftp
 brew install netcat
 brew install bison
 brew install flex
+brew install tintin
+brew install tinyfugue
 
 # Special for BSD Games
 brew install bsdmake
