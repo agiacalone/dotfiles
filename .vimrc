@@ -85,6 +85,7 @@ Plugin 'lervag/vimtex'
 Plugin 'arcticicestudio/nord-vim'
 Plugin 'lifepillar/vim-solarized8'
 Plugin 'rakr/vim-one'
+Plugin 'haishanh/night-owl.vim'
 call vundle#end()            " required
 filetype plugin indent on    " required
 
@@ -97,6 +98,12 @@ let g:airline_section_x = '%{PencilMode()}'
 
 " Settings for Ale Linter
 let g:ale_completion_enabled = 1
+
+" Enable for Night Owl
+let $NVIM_TUI_ENABLE_TRUE_COLOR=1  " enable for nvim
+syntax enable
+colorscheme night-owl
+let g:lightline = { 'colorscheme': 'nightowl' }
 
 " Enable for Nord Theme
 "let g:airline_theme = 'nord'
@@ -124,10 +131,10 @@ let g:ale_completion_enabled = 1
 "colorscheme solarized8
 
 " Enable for vim One
-let g:airline_theme='one'
-let g:one_allow_italics = 1 " I love italic for comments
-let g:one_allow_underline = 1
-colorscheme one
+"let g:airline_theme='one'
+"let g:one_allow_italics = 1 " I love italic for comments
+"let g:one_allow_underline = 1
+"colorscheme one
 
 " Enable for Gruvbox Theme
 "colorscheme gruvbox
