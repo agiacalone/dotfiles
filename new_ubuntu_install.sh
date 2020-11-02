@@ -48,7 +48,7 @@ sudo apt-get install -y hexchat pan liferea
 sudo apt-get install -y bsdgames bsdgames-nonfree nethack-console crawl frotz inform inform-docs dosbox wine
 
 # Install fonts
-sudo apt-get install -y msttcorefonts ttf-liberation ttf-dejavu texlive-full
+sudo apt-get install -y msttcorefonts ttf-liberation ttf-dejavu texlive-full fonts-hack fonts-ibm-plex
 curl -L https://github.com/hbin/top-programming-fonts/raw/master/install.sh | bash
 
 # Install music programs
