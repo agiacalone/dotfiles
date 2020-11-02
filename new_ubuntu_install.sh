@@ -24,7 +24,7 @@ sudo apt-get install -y mc tmux screen arj rar unrar gpm p7zip-full
 p7zip-rar htop sshfs moreutils ddate htop
 
 # Install network tools
-sudo apt-get install -y netcat openssh-server tftp mosh oidentd lftp rtorrent
+sudo apt-get install -y netcat openssh-server tftp mosh oidentd lftp rtorrent net-tools
 
 # Install mail clients
 sudo apt-get install -y alpine mutt postfix mailutils
