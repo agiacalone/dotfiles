@@ -24,7 +24,7 @@ sudo apt-get install -y mc tmux screen arj rar unrar gpm p7zip-full
 p7zip-rar htop sshfs moreutils ddate htop
 
 # Install network tools
-sudo apt-get install -y netcat openssh-server tftp mosh oidentd lftp rtorrent
+sudo apt-get install -y netcat openssh-server tftp mosh oidentd lftp rtorrent net-tools
 
 # Install mail clients
 sudo apt-get install -y alpine mutt postfix mailutils
@@ -48,7 +48,7 @@ sudo apt-get install -y hexchat pan liferea
 sudo apt-get install -y bsdgames bsdgames-nonfree nethack-console crawl frotz inform inform-docs dosbox wine
 
 # Install fonts
-sudo apt-get install -y msttcorefonts ttf-liberation ttf-dejavu texlive-full
+sudo apt-get install -y msttcorefonts ttf-liberation ttf-dejavu texlive-full fonts-hack fonts-ibm-plex
 curl -L https://github.com/hbin/top-programming-fonts/raw/master/install.sh | bash
 
 # Install music programs
@@ -59,6 +59,15 @@ sudo apt-get install -y lamp-server^
 
 # Generate the SSH key
 ssh-keygen
+
+# Install Vundle for VIM
+git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+
+# Install TPM for tmux
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
+# Install oh-my-zsh
+sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 # Display the public key for copying
 cat ~/.ssh/id_rsa.pub

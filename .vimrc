@@ -89,6 +89,9 @@ Plugin 'haishanh/night-owl.vim'
 call vundle#end()            " required
 filetype plugin indent on    " required
 
+" Settings for vim-tex
+let g:tex_flavor = 'latex'
+
 " Settings for Airline Statusbar
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#left_sep = ' '
@@ -100,23 +103,24 @@ let g:airline_section_x = '%{PencilMode()}'
 let g:ale_completion_enabled = 1
 
 " Enable for Night Owl
-let $NVIM_TUI_ENABLE_TRUE_COLOR=1  " enable for nvim
-syntax enable
-colorscheme night-owl
-let g:lightline = { 'colorscheme': 'nightowl' }
+"let $NVIM_TUI_ENABLE_TRUE_COLOR=1  " enable for nvim
+"syntax enable
+"colorscheme night-owl
+"let g:lightline = { 'colorscheme': 'nightowl' }
 
 " Enable for Nord Theme
-"let g:airline_theme = 'nord'
-"let g:nord_italic = 1
-"let g:nord_italic_comments = 1
-"let g:nord_cursor_line_number_background = 1
-"let g:nord_underline = 1
-"let g:nord_uniform_status_lines = 1
-"let g:nord_uniform_diff_background = 1
-"let g:nord_bold = 0
-"let g:nord_bold_vertical_split_line = 1
+let g:airline_theme = 'nord'
+let g:nord_italic = 1
+let g:nord_italic_comments = 1
+let g:nord_cursor_line_number_background = 1
+let g:nord_underline = 1
+let g:nord_uniform_status_lines = 1
+let g:nord_uniform_diff_background = 1
+let g:nord_bold = 0
+let g:nord_bold_vertical_split_line = 1
+let g:lightline = { 'colorscheme' : 'nord' }
 "let g:nord_comment_brightness = 15
-"colorscheme nord
+colorscheme nord
 
 " Enable for Solarized Theme
 "set background=dark
