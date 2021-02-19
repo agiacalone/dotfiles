@@ -58,7 +58,7 @@ sudo apt-get install -y pianobar pithos vlc
 sudo apt-get install -y lamp-server^
 
 # Generate the SSH key
-ssh-keygen
+#ssh-keygen
 
 # Install Vundle for VIM
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
@@ -70,8 +70,8 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 # Display the public key for copying
-cat ~/.ssh/id_rsa.pub
-read -p "Copy the public key to Github and then press [Enter] to continue..."
+#cat ~/.ssh/id_rsa.pub
+#read -p "Copy the public key to Github and then press [Enter] to continue..."
 
 # Make the directories and copy stuff from Github
 mkdir ~/bin
