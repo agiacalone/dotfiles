@@ -5,7 +5,7 @@ sudo apt-get update
 sudo apt-get dist-upgrade -y
 
 # Install dev tools
-sudo apt-get install -y netcat nmap build-essential bison flex bison-doc gawk git pv task taskd tasksh
+sudo apt-get install -y netcat nmap build-essential bison flex bison-doc gawk git pv task taskd tasksh git curl wget
 
 # Install programming languages
 sudo apt-get install -y gfortran fort77 erlang swi-prolog clojure fp-ide gcj-4.9-jre-headless clojure1.6 ghc ghc-doc haskell-doc alex happy
@@ -17,11 +17,10 @@ sudo apt-get install -y libgl1-mesa-dev libglc-dev freeglut3-dev libedit-dev lib
 sudo apt-get install -y parted gparted xfsprogs reiserfsprogs reiser4progs jfsutils dmraid gpart xfsdump hfsprogs secure-delete
 
 # Install editors
-sudo apt-get install -y vim emacs nano hexedit sc
+sudo apt-get install -y vim emacs nano hexedit sc neovim
 
 # Install shell tools
-sudo apt-get install -y mc tmux screen arj rar unrar gpm p7zip-full
-p7zip-rar htop sshfs moreutils ddate htop
+sudo apt-get install -y mc tmux screen arj rar unrar gpm p7zip-full p7zip-rar htop sshfs moreutils ddate
 
 # Install network tools
 sudo apt-get install -y netcat openssh-server tftp mosh oidentd lftp rtorrent net-tools
