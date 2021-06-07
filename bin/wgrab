@@ -1,0 +1,20 @@
+#!/bin/bash
+
+## wgrab - a site downloader for wget
+
+URL=$1
+
+# Does wget exist?
+if ! command -v wget &> /dev/null
+    then echo "wget is not installed"
+    exit
+fi
+
+# Exit if there isn't a url
+if [ ! $URL ]
+    then
+        echo "provide a url"
+    exit
+fi
+
+wget -r –level=0 -E –ignore-length -x -k -p -erobots=off -np -N $URL
