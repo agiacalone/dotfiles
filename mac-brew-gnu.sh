@@ -3,18 +3,19 @@
 
 
 # First, install homebrew
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+#/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
 # Install oh-my-zsh
 brew install curl
 brew install zsh
-sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+#sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 # core
 brew install coreutils
 
 # key commands
 brew install binutils
+brew install inetutils
 brew install diffutils
 brew install ed
 brew install findutils
@@ -71,11 +72,57 @@ brew install bison
 brew install flex
 brew install tintin
 brew install tinyfugue
+brew install youtube-dl
+brew install rtorrent
+brew install speedtest-cli
+brew install --cask signal
+brew install --cask spatterlight
+brew install --cask obs
+brew install --cask audacity
+brew install --cask wine-stable
+brew install winetricks
+#brew install --cask vmware-fusion
 
 # Special for BSD Games
 brew install bsdmake
 brew tap ctdk/ctdk
 brew install bsdgames-osx
+
+# GUI stuff
+brew install vlc
+brew insatll docker
+brew install multipass
+brew install --cask lagrange
+brew install --cask iterm2
+brew install --cask firefox
+brew install --cask element
+brew install --cask textual
+brew install --cask postbox
+brew install --cask 1password
+brew install --cask caffeine
+brew install --cask vscodium
+brew install hexedit
+brew install dosbox
+brew install boxer
+brew install pidgin
+brew install --cask macvim
+brew install --cask usenapp
+brew install --cask nvidia-geforce-now
+brew install --cask spotify
+brew install --cask discord
+brew install --cask mactex
+brew install --cask lyx
+brew install --cask gog-galaxy
+brew install --cask steam
+brew install --cask cardhop
+brew install --cask fantastical
+brew install --cask zoom
+
+# Fonts
+brew tap homebrew/cask-fonts
+brew install font-hack
+brew install font-ibm-plex
+brew install font-inconsolata
 
 # Generate the SSH key
 ssh-keygen
