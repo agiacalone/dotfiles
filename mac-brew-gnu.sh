@@ -117,6 +117,10 @@ brew install --cask steam
 brew install --cask cardhop
 brew install --cask fantastical
 brew install --cask zoom
+brew install --cask macdown
+brew install --cask whalebird
+brew install toot
+brew install --cask little-snitch
 
 # Fonts
 brew tap homebrew/cask-fonts
