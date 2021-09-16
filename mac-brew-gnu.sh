@@ -121,6 +121,8 @@ brew install --cask macdown
 brew install --cask whalebird
 brew install toot
 brew install --cask little-snitch
+brew install scummvm
+
 
 # Fonts
 brew tap homebrew/cask-fonts
