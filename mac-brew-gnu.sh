@@ -122,6 +122,7 @@ brew install --cask whalebird
 brew install toot
 brew install --cask little-snitch
 brew install scummvm
+brew install --cask atlantis
 
 
 # Fonts
