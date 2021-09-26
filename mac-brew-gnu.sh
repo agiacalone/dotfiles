@@ -31,6 +31,7 @@ brew install screen
 brew install watch
 brew install wdiff
 brew install wget
+brew install gnu-getopt
 
 # OS X ships a GNU version, but too old
 brew install bash
