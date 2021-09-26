@@ -82,6 +82,8 @@ brew install --cask audacity
 brew install --cask wine-stable
 brew install winetricks
 brew install --cask cyberduck
+brew install --cask cryptomator
+brew install --cask mountain-duck
 #brew install --cask vmware-fusion
 
 # Special for BSD Games
