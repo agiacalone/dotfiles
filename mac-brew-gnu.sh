@@ -81,6 +81,7 @@ brew install --cask obs
 brew install --cask audacity
 brew install --cask wine-stable
 brew install winetricks
+brew install --cask cyberduck
 #brew install --cask vmware-fusion
 
 # Special for BSD Games
