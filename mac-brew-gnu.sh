@@ -123,6 +123,8 @@ brew install toot
 brew install --cask little-snitch
 brew install scummvm
 brew install --cask atlantis
+brew install --cask mudlet
+brew install cakebrew
 
 
 # Fonts
