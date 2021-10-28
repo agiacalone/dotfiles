@@ -1,0 +1,2 @@
+sudo python3 ~/git/hosts/updateHostsFile.py --auto -r -e fakenews
+sudo dscacheutil -flushcache;sudo killall -HUP mDNSResponder
