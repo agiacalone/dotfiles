@@ -1,0 +1,1 @@
+rsync -av anthonyg@r.circumlunar.space:/home/anthonyg/gemini/ /Users/anthony/gemini/

@@ -1,0 +1,6 @@
+# Dotfile stuff
+.passwords
+
+# MacOS Stuff
+.DS_Store
+
