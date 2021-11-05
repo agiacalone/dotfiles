@@ -1,0 +1,5 @@
+# Rename all *.cbz to *.zip
+for f in *.cbz; do 
+    mv -- "$f" "${f%.cbz}.zip"
+done
+
