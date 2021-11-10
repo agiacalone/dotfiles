@@ -2,12 +2,13 @@
 #!/bin/bash
 
 # set up our variables
-name=$1
+name=$3
 url='https://readcomiconline.li/Comic/'
 zip='--zip'
 dir='-d ./'
 cookies='--cookies /home/anthony/comics/cookies-readcomiconline-li.txt'
 sleep='--sleep 1'
+chapter='--chapter-range '$1'-'$2
 
 # run the command
-gallery-dl $sleep $cookies $dir $url$name
+gallery-dl $sleep $cookies $dir $chapter $url$name

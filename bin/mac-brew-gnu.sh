@@ -1,24 +1,23 @@
+#!/bin/bash
 # Installer for new Mac installs
 # This script will install homebrew, oh-my-zsh, and others
 
-
-# First, install homebrew
-#/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+# Install homebrew
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
 # Install oh-my-zsh
 brew install curl
 brew install zsh
-#sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
-# core
+# Install basic utilities
 brew install coreutils
-
-# key commands
 brew install binutils
 brew install inetutils
 brew install diffutils
 brew install ed
 brew install findutils
+brew install moreutils
 brew install gawk
 brew install gnu-indent
 brew install gnu-sed
@@ -33,7 +32,7 @@ brew install wdiff
 brew install wget
 brew install gnu-getopt
 
-# OS X ships a GNU version, but too old
+# Install the better utilities
 brew install bash
 brew install emacs
 brew install gdb  # gdb requires further actions to make it work. See `brew info gdb`.
@@ -42,7 +41,8 @@ brew install m4
 brew install make
 brew install nano
 
-# Other commands (non-GNU)
+
+# Other commands (non-GUI)
 brew install file-formula
 brew install git
 brew install less
@@ -61,7 +61,6 @@ brew install neomutt
 brew install slrn
 brew install weechat
 brew install nethack
-brew install moreutils
 brew install ddate
 brew install frotz
 brew install inform6
@@ -76,16 +75,17 @@ brew install tinyfugue
 brew install youtube-dl
 brew install rtorrent
 brew install speedtest-cli
-brew install --cask signal
-brew install --cask spatterlight
-brew install --cask obs
-brew install --cask audacity
-brew install --cask wine-stable
-brew install winetricks
-brew install --cask cyberduck
-brew install --cask cryptomator
-brew install --cask mountain-duck
-#brew install --cask vmware-fusion
+brew install aircrak-ng
+brew install gallery-dl
+brew install zsh-git-prompt
+brew install zsh-completions
+brew install zsh-autosuggestions
+brew install zsh-async
+brew install zsh-navigation-tools
+brew install zsh-lovers
+brew install zsh-you-should-use
+brew install wireguard-tools
+
 
 # Special for BSD Games
 brew install bsdmake
@@ -103,8 +103,11 @@ brew install --cask element
 brew install --cask textual
 brew install --cask postbox
 brew install --cask 1password
+brew install --cask 1password-cli
 brew install --cask caffeine
 brew install --cask vscodium
+brew install --cask signal
+brew install --cask spatterlight
 brew install hexedit
 brew install dosbox
 brew install boxer
@@ -129,13 +132,40 @@ brew install scummvm
 brew install --cask atlantis
 brew install --cask mudlet
 brew install cakebrew
-
+brew install chirp
+brew install freeorion
+brew install gas-mask
+brew install ghidra
+brew install gnucash
+brew install hyper
+brew install cool-retro-term 
+brew install dwarf-fortress
+brew install psi-plus
+brew install wireshark
+brew install --cask trader-workstation
+brew install --cask yacreader
+brew install --cask thinkorswim
+brew install --cask crossover
+brew install --cask obs
+brew install --cask audacity
+brew install --cask wine-stable
+brew install winetricks
+brew install --cask cyberduck
+brew install --cask cryptomator
+brew install --cask mountain-duck
+brew install --cask vmware-fusion
+brew install zsh-syntax-highlighting
+brew install chirp
 
 # Fonts
 brew tap homebrew/cask-fonts
 brew install font-hack
 brew install font-ibm-plex
 brew install font-inconsolata
+brew install font-jetbrains-mono
+brew install font-source-code-pro
+brew install font-terminus
+brew install font-fira-code
 
 # Generate the SSH key
 ssh-keygen

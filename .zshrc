@@ -56,7 +56,7 @@ ZSH_THEME="cypher"
 
 ZSH_DISABLE_COMPFIX="true"
 
-plugins=(git tmux colored-man-pages mosh npm node osx)
+plugins=(git tmux colored-man-pages mosh npm node macos)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -89,7 +89,7 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-# Enable for tmux support in MacOS
+# Enable utf-8 for tmux support
 export LANG=en_US.UTF-8
 export LC_CTYPE=en_US.UTF-8
 
@@ -97,6 +97,13 @@ DISABLE_UPDATE_PROMPT='true'
 
 export PATH="${PATH}:/Users/anthony/bin"
 export PATH="$(brew --prefix coreutils)/libexec/gnubin:/usr/local/bin:$PATH"
+
+# Path for Visual Studio Code shell integration
+export PATH="$PATH:/Applications/VSCodium.app/Contents/Resources/app/bin"
+#export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+
+# Path for gems
+export PATH="$PATH:/Users/anthony/.gem/ruby/2.6.0/bin"
 
 # Load Nord theme
 test -r "~/.dir_colors" && eval $(dircolors ~/.dir_colors)
@@ -111,8 +118,33 @@ export NNTPSERVER
 # Add local timezone
 export TZ=US/Pacific
 
+# load the alias file
 source ~/.bash_aliases
+
+# load zsh stuff
+source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /usr/local/opt/zsh-git-prompt/zshrc.sh
+source /usr/local/share/zsh-navigation-tools/zsh-navigation-tools.plugin.zsh
+source /usr/local/share/zsh-you-should-use/you-should-use.plugin.zsh
+
+if type brew &>/dev/null; then
+    FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
+    autoload -Uz compinit
+    compinit
+fi
+
+
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 export PATH="/usr/local/sbin:$PATH"
+export PATH="/usr/local/opt/ssh-copy-id/bin:$PATH"
+export PATH="$PATH:${HOME}/.config/flutter/bin"
+
+
+PATH="/Users/anthony/perl5/bin${PATH:+:${PATH}}"; export PATH;
+PERL5LIB="/Users/anthony/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
+PERL_LOCAL_LIB_ROOT="/Users/anthony/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
+PERL_MB_OPT="--install_base \"/Users/anthony/perl5\""; export PERL_MB_OPT;
+PERL_MM_OPT="INSTALL_BASE=/Users/anthony/perl5"; export PERL_MM_OPT;
