@@ -86,7 +86,7 @@ brew install zsh-navigation-tools
 brew install zsh-lovers
 brew install zsh-you-should-use
 brew install wireguard-tools
-
+brew install gnu-chess
 
 # Special for BSD Games
 brew install bsdmake
