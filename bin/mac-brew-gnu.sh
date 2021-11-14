@@ -31,6 +31,7 @@ brew install watch
 brew install wdiff
 brew install wget
 brew install gnu-getopt
+brew install gnu-units
 
 # Install the better utilities
 brew install bash
