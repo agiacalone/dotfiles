@@ -119,6 +119,7 @@ brew install --cask nvidia-geforce-now
 brew install --cask spotify
 brew install --cask discord
 brew install --cask mactex
+brew install pandoc
 brew install --cask lyx
 brew install --cask gog-galaxy
 brew install --cask steam
