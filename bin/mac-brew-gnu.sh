@@ -100,6 +100,7 @@ brew install multipass
 brew install --cask lagrange
 brew install --cask iterm2
 brew install --cask firefox
+brew install multifirefox
 brew install --cask element
 brew install --cask textual
 brew install --cask postbox

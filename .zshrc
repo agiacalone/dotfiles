@@ -122,11 +122,11 @@ export TZ=US/Pacific
 source ~/.bash_aliases
 
 # load zsh stuff
-source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+#source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+#source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source /usr/local/opt/zsh-git-prompt/zshrc.sh
-source /usr/local/share/zsh-navigation-tools/zsh-navigation-tools.plugin.zsh
-source /usr/local/share/zsh-you-should-use/you-should-use.plugin.zsh
+#source /usr/local/share/zsh-navigation-tools/zsh-navigation-tools.plugin.zsh
+#source /usr/local/share/zsh-you-should-use/you-should-use.plugin.zsh
 
 if type brew &>/dev/null; then
     FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
