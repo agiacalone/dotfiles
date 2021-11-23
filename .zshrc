@@ -116,7 +116,7 @@ NNTPSERVER="news.eternal-september.org"
 export NNTPSERVER
 
 # Add local timezone
-export TZ=US/Pacific
+export TZ=US/Pacific-New
 
 # load the alias file
 source ~/.bash_aliases
