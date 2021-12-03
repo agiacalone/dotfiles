@@ -1,7 +1,6 @@
-" General vim Settings
 set t_Co=256			"set vim to use 256 colors
 "set term=xterm-256color "set the term to xterm-256--may break some terms
-filetype indent on      "make use of language-specific indentations
+filetype plugin indent on      "make use of language-specific indentations
 set nocompatible		"use vim defaults
 set noshowmode
 set ls=2				"always show status line
@@ -45,12 +44,13 @@ set foldnestmax=10      "don't let folds get too crazy
 set foldmethod=indent   "fold based on indent level
 set cursorline          "highlight the current line
 set showcmd             "show the last run command at the bottom
+set noswapfile          "disable swapfile
 syntax enable			"syntax highlighting on
 set bs=2                "backspace fix for some systems
 
 " Allow for true colors on Mac
-let &t_8f="\<Esc>[38;2;%lu;%lu;%lum"
-let &t_8b="\<Esc>[48;2;%lu;%lu;%lum"
+"let &t_8f="\<Esc>[38;2;%lu;%lu;%lum"
+"let &t_8b="\<Esc>[48;2;%lu;%lu;%lum"
 set termguicolors
 
 " Allow for italics on Mac
@@ -78,7 +78,7 @@ Plugin 'junegunn/vim-journal'
 Plugin 'tpope/vim-surround'
 Plugin 'scrooloose/syntastic'
 Plugin 'altercation/vim-colors-solarized'
-Plugin 'ajh17/spacegray.vim'
+Plugin 'ackyshake/spacegray.vim'
 Plugin 'gsiano/vmux-clipboard'
 Plugin 'w0rp/ale'
 Plugin 'lervag/vimtex'
@@ -86,6 +86,10 @@ Plugin 'arcticicestudio/nord-vim'
 Plugin 'lifepillar/vim-solarized8'
 Plugin 'rakr/vim-one'
 Plugin 'haishanh/night-owl.vim'
+Plugin 'preservim/nerdtree'
+Plugin 'tiagofumo/vim-nerdtree-syntax-highlight'
+Plugin 'tpope/vim-obsession'
+Plugin 'dhruvasagar/vim-prosession'
 call vundle#end()            " required
 filetype plugin indent on    " required
 
@@ -104,9 +108,9 @@ let g:ale_completion_enabled = 1
 
 " Enable for Night Owl
 "let $NVIM_TUI_ENABLE_TRUE_COLOR=1  " enable for nvim
-"syntax enable
+"let g:airline_theme = 'night_owl'
+"let g:lightline = { 'colorscheme': 'night_owl' }
 "colorscheme night-owl
-"let g:lightline = { 'colorscheme': 'nightowl' }
 
 " Enable for Nord Theme
 let g:airline_theme = 'nord'
@@ -116,10 +120,9 @@ let g:nord_cursor_line_number_background = 1
 let g:nord_underline = 1
 let g:nord_uniform_status_lines = 1
 let g:nord_uniform_diff_background = 1
-let g:nord_bold = 0
+let g:nord_bold = 1
 let g:nord_bold_vertical_split_line = 1
 let g:lightline = { 'colorscheme' : 'nord' }
-"let g:nord_comment_brightness = 15
 colorscheme nord
 
 " Enable for Solarized Theme
