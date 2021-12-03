@@ -192,4 +192,12 @@ git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 # Install tpm for tmux
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
+# Make MacOS nicer for development
+
+defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+defaults write com.apple.finder ShowStatusBar -bool true
+defaults write com.apple.finder QLEnableTextSelection -bool true
+defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
+killAll Finder
+
 # The initial installation setup should be complete!
