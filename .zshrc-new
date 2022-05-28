@@ -264,7 +264,7 @@ export PATH="$HOME/bin:$PATH"
 source ~/.aliases
 
 # load OS-specific (or machine-specific) settings
-source ~/.zshrc-macos
+# source ~/.zshrc-macos
 # source ~/.zshrc-linux
 # source ~/.zshrc-bsd
 # source ~/.zshrc-sdf
