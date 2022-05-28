@@ -267,3 +267,4 @@ source ~/.aliases
 source ~/.zshrc-macos
 # source ~/.zshrc-linux
 # source ~/.zshrc-bsd
+# source ~/.zshrc-sdf

@@ -1,5 +1,6 @@
 # Script for iTerm2 integration
-
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
-
+# Enable for tmux support on macos
+export LANG=en_US.UTF-8
+export LC_CTYPE=en_US.UTF-8
