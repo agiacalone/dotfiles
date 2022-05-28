@@ -257,6 +257,9 @@ if [ -f /etc/zsh_command_not_found ]; then
     . /etc/zsh_command_not_found
 fi
 
+# set the user's local bin in the path
+export PATH="$HOME/bin:$PATH"
+
 # load user-defined aliases for the local machine
 source ~/.aliases
 
