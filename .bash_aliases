@@ -40,3 +40,5 @@ alias weechat-sdf='weechat -r "/connect sdf"'
 alias weechat-tilde='weechat -r "/connect tilde"'
 alias weechat-libre='weechat -r "/connect libre"'
 alias bbs='ssh -t anthonyg@r.circumlunar.space bbs'
+alias dcp='docker-compose pull'
+

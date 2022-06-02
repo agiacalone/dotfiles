@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# rm-ad: small utility to delete files (adverts) from within a zip archive.
+
+
+
+zip -d 
+
+
+

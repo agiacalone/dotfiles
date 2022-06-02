@@ -61,8 +61,9 @@ let &t_ZR="\e[23m"
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
+Plugin 'itchyny/lightline.vim'
+"Plugin 'vim-airline/vim-airline'
+"Plugin 'vim-airline/vim-airline-themes'
 Plugin 'lesliev/vim-inform7'
 Plugin 'flazz/vim-colorschemes'
 Plugin 'godlygeek/tabular'
@@ -97,33 +98,33 @@ filetype plugin indent on    " required
 let g:tex_flavor = 'latex'
 
 " Settings for Airline Statusbar
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#left_sep = ' '
-let g:airline#extensions#tabline#left_alt_sep = '|'
-let g:airline_powerline_fonts = 1
-let g:airline_section_x = '%{PencilMode()}'
+"let g:airline#extensions#tabline#enabled = 1
+"let g:airline#extensions#tabline#left_sep = ' '
+"let g:airline#extensions#tabline#left_alt_sep = '|'
+"let g:airline_powerline_fonts = 1
+"let g:airline_section_x = '%{PencilMode()}'
 
 " Settings for Ale Linter
 let g:ale_completion_enabled = 1
 
 " Enable for Night Owl
-"let $NVIM_TUI_ENABLE_TRUE_COLOR=1  " enable for nvim
+let $NVIM_TUI_ENABLE_TRUE_COLOR=1  " enable for nvim
 "let g:airline_theme = 'night_owl'
-"let g:lightline = { 'colorscheme': 'night_owl' }
-"colorscheme night-owl
+let g:lightline = { 'colorscheme': 'nightowl' }
+colorscheme night-owl
 
 " Enable for Nord Theme
-let g:airline_theme = 'nord'
-let g:nord_italic = 1
-let g:nord_italic_comments = 1
-let g:nord_cursor_line_number_background = 1
-let g:nord_underline = 1
-let g:nord_uniform_status_lines = 1
-let g:nord_uniform_diff_background = 1
-let g:nord_bold = 1
-let g:nord_bold_vertical_split_line = 1
-let g:lightline = { 'colorscheme' : 'nord' }
-colorscheme nord
+"let g:airline_theme = 'nord'
+"let g:nord_italic = 1
+"let g:nord_italic_comments = 1
+"let g:nord_cursor_line_number_background = 1
+"let g:nord_underline = 1
+"let g:nord_uniform_status_lines = 1
+"let g:nord_uniform_diff_background = 1
+"let g:nord_bold = 1
+"let g:nord_bold_vertical_split_line = 1
+"let g:lightline = { 'colorscheme' : 'nord' }
+"colorscheme nord
 
 " Enable for Solarized Theme
 "set background=dark

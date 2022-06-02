@@ -1,0 +1,4 @@
+#!/bin/sh
+
+curl -s http://checkip.dyndns.org | sed 's/[a-zA-Z<>/ :]//g'
+
