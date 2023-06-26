@@ -6,7 +6,7 @@
 sudo chmod 774 "$1"
 sudo chown plex:plex "$1"
 
-zip -d "$1" \
+zip -dq "$1" \
 	*ZoU*.jpg \
 	*zSoU-Nerd.jpg \
 	*ZZ*.jpg \
@@ -17,4 +17,13 @@ zip -d "$1" \
 	*zOrions*.jpg \
 	*xBluntmanx.jpg \
 	*zzdelirium_dargh.png \
+	*zOl\ Joe.jpg \
+	*yy\ tag*.png \
+	*zz\ tag*.png \
+	*zdeam.jpg \
+	*Z-T-Head.jpg \
+	*ZEYES.jpg \
+	*zPink.jpg \
+	*z_lovetrumpet.jpg \
+	*Z_DarthScanner.jpg \
 
