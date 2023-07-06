@@ -8,6 +8,8 @@ sudo chown plex:plex "$1"
 
 zip -dq "$1" \
 	*ZoU*.jpg \
+	*ScoobyDooMovie*.jpg \
+	*vProletariat-dcp.png \
 	*zSoU-Nerd.jpg \
 	*ZZ*.jpg \
 	*zz*.jpg \
@@ -24,6 +26,20 @@ zip -dq "$1" \
 	*Z-T-Head.jpg \
 	*ZEYES.jpg \
 	*zPink.jpg \
+	*Z-Pink.jpg \
+	*zpinktee.jpg \
 	*z_lovetrumpet.jpg \
 	*Z_DarthScanner.jpg \
+	*zbig.jpg \
+	*zLima.jpg \
+	*zpour.jpg \
+	*zlollipop.jpg \
+	*zxcd.jpg \
+	*z87ih.jpg \
+	*zSnarl.jpg \
+	*zWorld.jpg \
+	*zworld.jpg \
+	*zexplode.jpg \
+	*z-Just\ One\ Man.jpg \
+	*zbbb*.jpg \
 
