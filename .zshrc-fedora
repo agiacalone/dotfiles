@@ -9,7 +9,7 @@ export ZSH=~/.oh-my-zsh
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
 #ZSH_THEME="robbyrussell"
 #ZSH_THEME="pygmalion"
-ZSH_THEME="cypher"
+ZSH_THEME=cypher
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -54,7 +54,7 @@ ZSH_THEME="cypher"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 
-ZSH_DISABLE_COMPFIX="true"
+ZSH_DISABLE_COMPFIX=true
 
 plugins=(git tmux colored-man-pages mosh npm node macos)
 
@@ -93,14 +93,8 @@ source $ZSH/oh-my-zsh.sh
 export LANG=en_US.UTF-8
 export LC_CTYPE=en_US.UTF-8
 
-DISABLE_UPDATE_PROMPT='true'
-
-# Path for Visual Studio Code shell integration
-export PATH="$PATH:/Applications/VSCodium.app/Contents/Resources/app/bin"
-#export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
-
-# Path for gems
-export PATH="$PATH:/Users/anthony/.gem/ruby/2.6.0/bin"
+# Always auto-update oh-my-zsh
+DISABLE_UPDATE_PROMPT=true
 
 # Load Nord theme
 test -r "~/.dir_colors" && eval $(dircolors ~/.dir_colors)
@@ -108,7 +102,7 @@ test -r "~/.dir_colors" && eval $(dircolors ~/.dir_colors)
 # Color for term
 export CLICOLOR="Yes"
 
-# Fix gpg for terminal use
+# Fix for gpg terminal use
 export GPG_TTY=$(tty)
 
 # Add newsserver
@@ -127,6 +121,12 @@ source ~/.aliases
 #source /usr/local/opt/zsh-git-prompt/zshrc.sh
 #source /usr/local/share/zsh-navigation-tools/zsh-navigation-tools.plugin.zsh
 #source /usr/local/share/zsh-you-should-use/you-should-use.plugin.zsh
+
+if type brew &>/dev/null; then
+    FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
+    autoload -Uz compinit
+    compinit
+fi
 
 export PATH="/usr/local/sbin:$PATH"
 export PATH="/usr/local/opt/ruby/bin:$PATH"
