@@ -1,6 +1,6 @@
 #!/bin/bash
 
-$VBOXIMG = "macOS Sonoma"
+VBOXIMG = "macOS Sonoma"
 
 # Suppress the annoying warnings about keyboards and such
 VBoxManage setextradata global GUI/SuppressMessages "all"
