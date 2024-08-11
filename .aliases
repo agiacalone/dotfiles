@@ -21,11 +21,7 @@ alias mutt-tilde='ssh -t anthonyg@tilde.team neomutt'
 #alias mutt-csulb='mutt -F ~/.muttrc-csulb'
 alias fizmo='fizmo-ncursesw'
 alias emacs='emacs -nw'
-<<<<<<< HEAD
-alias sysupdate='sudo dnf upgrade -y'
-=======
 alias sysupdate='sudo dnf update -y'
->>>>>>> refs/remotes/origin/main
 alias weather='ansiweather -u imperial -d true'
 alias ubrew='brew update && brew upgrade'
 alias ma='ssh anthonyg@ma.sdf.org -D localhost:8080'
