@@ -129,4 +129,5 @@ if type brew &>/dev/null; then
 fi
 
 export PATH="/usr/local/sbin:$PATH"
-export PATH="/home/anthony/bin:$PATH"
+export PATH="/var/lib/flatpak/exports/share:$PATH"  # Flatpak
+export PATH="/home/anthony/bin:$PATH"  # home bin
