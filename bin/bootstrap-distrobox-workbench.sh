@@ -1,10 +1,21 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+REBUILD=0
+
+for arg in "$@"; do
+  case "$arg" in
+    --rebuild)
+      REBUILD=1
+      ;;
+  esac
+done
+
+
 # === Config ===
 NAME="${NAME:-workbench}"
-IMAGE="${IMAGE:-registry.fedoraproject.org/fedora:43}"   # stable (avoid Rawhide for your pet container)
-HOME_MOUNTS="${HOME_MOUNTS:-1}"                          # 1 = use your real $HOME inside container
+IMAGE="${IMAGE:-registry.fedoraproject.org/fedora:43}"   # stable (avoid Rawhide for workbench containers)
+HOME_MOUNTS="${HOME_MOUNTS:-1}"                          # 1 = use real $HOME inside container
 DEFAULT_SHELL_ZSH="${DEFAULT_SHELL_ZSH:-1}"
 
 
@@ -61,16 +72,19 @@ inbox_user() {
 }
 
 echo "[*] Creating container '$NAME' from '$IMAGE' (or reusing if it exists)..."
-if ! distrobox list 2>/dev/null | awk '{print $1}' | grep -qx "$NAME"; then
-  CREATE_ARGS=( create --name "$NAME" --image "$IMAGE" )
-  if [[ "$HOME_MOUNTS" == "1" ]]; then
-    # default distrobox behavior already uses your HOME; keep it explicit-ish by doing nothing special
-    :
-  fi
 
-  distrobox "${CREATE_ARGS[@]}"
+if podman container exists "$NAME"; then
+  if [[ "$REBUILD" == "1" ]]; then
+    echo "[*] Rebuild requested. Removing existing container '$NAME'..."
+    distrobox rm -f "$NAME"
+    echo "[*] Recreating container..."
+    distrobox create --name "$NAME" --image "$IMAGE"
+  else
+    echo "[*] Container '$NAME' already exists; will configure/update it."
+  fi
 else
-  echo "[*] Container '$NAME' already exists; will configure/update it."
+  echo "[*] Creating container '$NAME'..."
+  distrobox create --name "$NAME" --image "$IMAGE"
 fi
 
 echo "[*] Ensuring sudo works inside container (you may be prompted once)..."
