@@ -24,11 +24,14 @@ PKGS_BASE=(
   # build / dev
   gcc gcc-c++ make cmake gdb
   git git-lfs
+  rust cargo
 
   # editor / terminal
   neovim tmux
   zsh
+  pwgen
   fastfetch
+  yt-dlp
 
   # search / navigation
   ripgrep fd-find fzf
@@ -150,3 +153,5 @@ To rebuild from scratch:
   $0
 
 EOF
+
+sudo distrobox enter --name workbench -- bash /home/anthony/bin/enable_third_party_repos.sh
