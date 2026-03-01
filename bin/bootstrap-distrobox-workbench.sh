@@ -154,4 +154,4 @@ To rebuild from scratch:
 
 EOF
 
-sudo distrobox enter --name workbench -- bash /home/anthony/bin/enable_third_party_repos.sh
+distrobox enter --name workbench -- bash /home/anthony/bin/enable_third_party_repos.sh

@@ -4,9 +4,9 @@ echo "==> Enabling RPM Fusion and RPM Sphere..."
 FEDORA_VER="$(rpm -E %fedora)"
 
 # --- GPG Key Installation ---
-dnf install distribution-gpg-keys
-rpmkeys --import /usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-free-fedora-${FEDORA_VER}
-dnf --setopt=localpkg_gpgcheck=1 install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${FEDORA_VER}.noarch.rpm
+sudo dnf install distribution-gpg-keys
+sudo rpmkeys --import /usr/share/distribution-gpg-keys/rpmfusion/RPM-GPG-KEY-rpmfusion-free-fedora-${FEDORA_VER}
+sudo dnf --setopt=localpkg_gpgcheck=1 install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${FEDORA_VER}.noarch.rpm
 
 # --- RPM Fusion ---
 if ! rpm -q rpmfusion-free-release >/dev/null 2>&1; then
