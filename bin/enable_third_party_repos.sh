@@ -19,7 +19,7 @@ fi
 
 # --- RPM Sphere ---
 if ! rpm -q rpmsphere-release >/dev/null 2>&1; then
-  dnf install -y \
+  sudo dnf install -y \
     "https://github.com/rpmsphere/noarch/raw/master/r/rpmsphere-release-40-1.noarch.rpm"
 else
   echo "RPM Sphere already installed."
