@@ -11,13 +11,10 @@ for arg in "$@"; do
   esac
 done
 
-
 # === Config ===
 NAME="${NAME:-workbench}"
-IMAGE="${IMAGE:-registry.fedoraproject.org/fedora:43}"   # stable (avoid Rawhide for workbench containers)
-HOME_MOUNTS="${HOME_MOUNTS:-1}"                          # 1 = use real $HOME inside container
+IMAGE="${IMAGE:-registry.fedoraproject.org/fedora:43}"  # stable (avoid Rawhide for workbench containers)
 DEFAULT_SHELL_ZSH="${DEFAULT_SHELL_ZSH:-1}"
-
 
 # --- Packages (always installed) ---
 PKGS_BASE=(
@@ -36,46 +33,52 @@ PKGS_BASE=(
   # search / navigation
   ripgrep fd-find fzf
   htop
+  tree
+  bat
 
   # data / net / archives
   jq yq
   wget
+  curl
+  unzip
+  bind-utils
+
+  # debug / introspection
+  strace
+  file
 
   # python (handy everywhere)
   python3 python3-pip
 )
 
-# --- Optional extras (defaults, but easily overridden) ---
-EXTRA_PKGS_DEFAULT=""
-EXTRA_PKGS="${EXTRA_PKGS:-$EXTRA_PKGS_DEFAULT}"
-
-# Build final PKGS array (base + extras)
+# --- Optional extras (space-separated, e.g. EXTRA_PKGS="htop strace") ---
 PKGS=( "${PKGS_BASE[@]}" )
-if [[ -n "$EXTRA_PKGS" ]]; then
+if [[ -n "${EXTRA_PKGS:-}" ]]; then
   read -r -a EXTRA_ARR <<< "$EXTRA_PKGS"
   PKGS+=( "${EXTRA_ARR[@]}" )
 fi
 
-
-
+# === Helpers ===
 need() { command -v "$1" >/dev/null 2>&1 || { echo "Missing dependency: $1" >&2; exit 1; }; }
 
+# Run a command inside the container as root
+inbox_root() { distrobox enter "$NAME" -- sudo -n bash -lc "$*"; }
+
+# Run a command inside the container as the current user
+inbox_user() { distrobox enter "$NAME" -- bash -lc "$*"; }
+
+# Idempotently append a line to a file inside the container (as user)
+append_once() {
+  local pattern="$1" line="$2" file="$3"
+  inbox_user "touch ${file} && grep -qF '${pattern}' ${file} || echo '${line}' >> ${file}"
+}
+
+# === Container setup ===
 echo "[*] Checking host dependencies..."
 need distrobox
 need podman
 
-# Helper: run a command inside the container as root
-inbox_root() {
-  distrobox enter "$NAME" -- sudo -n bash -lc "$*"
-}
-
-# Helper: run a command inside the container as user
-inbox_user() {
-  distrobox enter "$NAME" -- bash -lc "$*"
-}
-
 echo "[*] Creating container '$NAME' from '$IMAGE' (or reusing if it exists)..."
-
 if podman container exists "$NAME"; then
   if [[ "$REBUILD" == "1" ]]; then
     echo "[*] Rebuild requested. Removing existing container '$NAME'..."
@@ -86,53 +89,50 @@ if podman container exists "$NAME"; then
     echo "[*] Container '$NAME' already exists; will configure/update it."
   fi
 else
-  echo "[*] Creating container '$NAME'..."
   distrobox create --name "$NAME" --image "$IMAGE"
 fi
 
 echo "[*] Ensuring sudo works inside container (you may be prompted once)..."
-# This will ask for your password inside the container if needed.
 inbox_user "sudo -v"
 
 echo "[*] Setting DNF defaults to avoid distrobox base-package landmines..."
-# These packages sometimes try to chown bind-mounted host files (/etc/host.conf, /dev, etc.) and can fail in distrobox.
-# Excluding them keeps your "pet" container stable.
+# filesystem* and setup* can try to chown bind-mounted host files and fail in distrobox.
 inbox_root "mkdir -p /etc/dnf"
-inbox_root "grep -q '^exclude=' /etc/dnf/dnf.conf 2>/dev/null || echo 'exclude=filesystem* setup*' | tee -a /etc/dnf/dnf.conf >/dev/null"
+inbox_root "grep -q '^exclude=' /etc/dnf/dnf.conf 2>/dev/null || echo 'exclude=filesystem* setup*' >> /etc/dnf/dnf.conf"
 inbox_root "dnf -y makecache --refresh"
 
 echo "[*] Installing packages..."
 # shellcheck disable=SC2048
 inbox_root "dnf -y install ${PKGS[*]}"
 
-echo "[*] Creating/patching your alias file (~/.aliases) with a safe sysupdate..."
-inbox_user "touch ~/.aliases"
-inbox_user "grep -q '^alias sysupdate=' ~/.aliases || echo \"alias sysupdate='sudo dnf upgrade -y --refresh --exclude=filesystem\\* --exclude=setup\\*'\" >> ~/.aliases"
+# === Shell environment ===
+echo "[*] Configuring shell environment..."
 
-echo "[*] Ensuring your shell loads ~/.aliases (idempotent)..."
-# For zsh (zsh is always installed)
-inbox_user "touch ~/.zshrc"
-inbox_user "grep -q 'source ~/.aliases' ~/.zshrc || echo '[[ -f ~/.aliases ]] && source ~/.aliases' >> ~/.zshrc"
-inbox_user "grep -q 'export EDITOR=nvim' ~/.zshrc || echo 'export EDITOR=nvim' >> ~/.zshrc"
-inbox_user "grep -q 'export VISUAL=nvim' ~/.zshrc || echo 'export VISUAL=nvim' >> ~/.zshrc"
+# sysupdate alias
+append_once 'alias sysupdate=' \
+  "alias sysupdate='sudo dnf upgrade -y --refresh --exclude=filesystem\* --exclude=setup\*'" \
+  ~/.aliases
 
-
-# For bash (in case you ever enter with bash)
-inbox_user "touch ~/.bashrc"
-inbox_user "grep -q 'source ~/.aliases' ~/.bashrc || echo '[[ -f ~/.aliases ]] && source ~/.aliases' >> ~/.bashrc"
-inbox_user "grep -q 'export EDITOR=nvim' ~/.bashrc || echo 'export EDITOR=nvim' >> ~/.bashrc"
-inbox_user "grep -q 'export VISUAL=nvim' ~/.bashrc || echo 'export VISUAL=nvim' >> ~/.bashrc"
+for rcfile in ~/.zshrc ~/.bashrc; do
+  append_once '[[ -f ~/.aliases ]]'  '[[ -f ~/.aliases ]] && source ~/.aliases' "$rcfile"
+  append_once 'EDITOR=nvim'          'export EDITOR=nvim'                       "$rcfile"
+  append_once 'VISUAL=nvim'          'export VISUAL=nvim'                       "$rcfile"
+done
 
 if [[ "$DEFAULT_SHELL_ZSH" == "1" ]]; then
-  echo "[*] Setting default shell to zsh inside container (for your user)..."
-  # chsh may require passwd entry inside container; this usually works in distrobox.
+  echo "[*] Setting default shell to zsh inside container..."
   inbox_user "command -v zsh >/dev/null && (chsh -s \"\$(command -v zsh)\" \"\$(whoami)\" || true)"
 fi
 
+# === Sanity checks ===
 echo "[*] Quick sanity checks..."
 inbox_user "nvim --version | head -n 2 || true"
 inbox_user "tmux -V || true"
 inbox_user "zsh --version || true"
+
+# === Third-party repos ===
+echo "[*] Enabling third-party repositories..."
+distrobox enter --name "$NAME" -- bash ~/bin/enable_third_party_repos.sh
 
 cat <<EOF
 
@@ -145,13 +145,11 @@ Then run:
   sysupdate
 
 Notes:
-- This uses Fedora 43 stable (good for a long-lived daily driver container).
-- It permanently excludes filesystem/setup upgrades inside the container to avoid RPM chown failures on bind mounts.
+- Uses Fedora 43 stable (good for a long-lived daily driver container).
+- Permanently excludes filesystem/setup upgrades inside the container to avoid RPM chown failures on bind mounts.
+- Override package list with: EXTRA_PKGS="pkg1 pkg2" $0
 
 To rebuild from scratch:
-  distrobox rm -f $NAME
-  $0
+  NAME=$NAME $0 --rebuild
 
 EOF
-
-distrobox enter --name workbench -- bash /home/anthony/bin/enable_third_party_repos.sh
