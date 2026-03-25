@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# dotfiles-update: clones or updates the dotfiles repo and copies files to $HOME.
+
+DOTFILES_DIR="$HOME/git/dotfiles"
+DOTFILES_REPO="https://github.com/agiacalone/dotfiles.git"
+
+mkdir -p "$HOME/git"
+
+if [[ ! -d "$DOTFILES_DIR/.git" ]]; then
+    echo "Cloning dotfiles repo..."
+    git clone "$DOTFILES_REPO" "$DOTFILES_DIR" || { echo "Error: git clone failed" >&2; exit 1; }
+else
+    echo "Pulling latest changes..."
+    git -C "$DOTFILES_DIR" pull || { echo "Error: git pull failed" >&2; exit 1; }
+fi
+
+echo "Copying dotfiles to $HOME..."
+# Copy dot files, excluding .git and .github
+for item in "$DOTFILES_DIR"/.[^.]*; do
+    name=$(basename "$item")
+    [[ "$name" == ".git" || "$name" == ".github" ]] && continue
+    cp -Rv "$item" "$HOME"/
+done
+# Copy non-dot files
+cp -Rv "$DOTFILES_DIR"/* "$HOME"/
+
+echo "Done."
