@@ -3,11 +3,8 @@
 # iTerm2 shell integration
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
-# Homebrew GNU coreutils and local bin
-export PATH="$(brew --prefix coreutils)/libexec/gnubin:/usr/local/bin:$PATH"
-
-# Path for Visual Studio Code shell integration
-export PATH="$PATH:/Applications/VSCodium.app/Contents/Resources/app/bin"
+# macOS-specific paths
+export PATH="$(brew --prefix coreutils)/libexec/gnubin:/usr/local/opt/ruby/bin:/Applications/VSCodium.app/Contents/Resources/app/bin:$PATH"
 
 # Use terminal for GPG
 export GPG_TTY=$(tty)
@@ -18,3 +15,6 @@ if type brew &>/dev/null; then
     autoload -Uz compinit
     compinit
 fi
+
+# macOS Specific aliases
+alias ubrew='brew update && brew upgrade'
