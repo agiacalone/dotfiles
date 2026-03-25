@@ -1,5 +1,7 @@
-# Script for iTerm2 integration
+# Linux-specific zsh configuration
 
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+# Use terminal for GPG
+export GPG_TTY=$(tty)
 
-
+# Load Nord theme for ls colors
+test -r ~/.dir_colors && eval $(dircolors ~/.dir_colors)

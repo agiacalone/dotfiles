@@ -1,45 +1,27 @@
 #!/bin/bash
 
-# rm-ad: small utility to delete files (adverts) from within a zip archive.
+# rm-ad: removes ad/garbage image files from within a comic book archive (CBZ/ZIP).
+# Patterns are maintained in ~/bin/rm-ad-list, one per line.
 
+if [[ -z "$1" ]]; then
+    echo "Usage: rm-ad <archive.cbz>" >&2
+    exit 1
+fi
 
-sudo chmod 774 "$1"
-sudo chown plex:plex "$1"
+if [[ ! -f "$1" ]]; then
+    echo "Error: file not found: $1" >&2
+    exit 1
+fi
 
-zip -dq "$1" \
-	*ZoU*.jpg \
-	*ScoobyDooMovie*.jpg \
-	*vProletariat-dcp.png \
-	*zSoU-Nerd.jpg \
-	*ZZ*.jpg \
-	*zz*.jpg \
-	*zTLK*.jpg \
-	*gpcdguy*.jpg \
-	*zWater*.jpg \
-	*zOrions*.jpg \
-	*xBluntmanx.jpg \
-	*zzdelirium_dargh.png \
-	*zOl\ Joe.jpg \
-	*yy\ tag*.png \
-	*zz\ tag*.png \
-	*zdeam.jpg \
-	*Z-T-Head.jpg \
-	*ZEYES.jpg \
-	*zPink.jpg \
-	*Z-Pink.jpg \
-	*zpinktee.jpg \
-	*z_lovetrumpet.jpg \
-	*Z_DarthScanner.jpg \
-	*zbig.jpg \
-	*zLima.jpg \
-	*zpour.jpg \
-	*zlollipop.jpg \
-	*zxcd.jpg \
-	*z87ih.jpg \
-	*zSnarl.jpg \
-	*zWorld.jpg \
-	*zworld.jpg \
-	*zexplode.jpg \
-	*z-Just\ One\ Man.jpg \
-	*zbbb*.jpg \
+chmod 774 "$1"
+chown "$(id -un):$(id -gn)" "$1"
 
+# Read patterns from list file, skip blank lines and comments
+mapfile -t patterns < <(grep -v '^\s*#' ~/bin/rm-ad-list | grep -v '^\s*$')
+
+if [[ ${#patterns[@]} -eq 0 ]]; then
+    echo "Error: no patterns found in ~/bin/rm-ad-list" >&2
+    exit 1
+fi
+
+zip -dq "$1" "${patterns[@]}"
