@@ -1,5 +1,4 @@
 set t_Co=256			"set vim to use 256 colors
-"set term=xterm-256color "set the term to xterm-256--may break some terms
 filetype plugin indent on      "make use of language-specific indentations
 set nocompatible		"use vim defaults
 set noshowmode
@@ -13,13 +12,10 @@ set showcmd				"display incomplete commands
 set hlsearch			"highlight searches
 set incsearch			"do incremental searches
 set ruler				"show the cursor position all the time
-"set visualbell t_vb	"turn off error beep/flash
 set nobackup			"do not keep a backup file
 set ignorecase			"ignore case when searching
-"set noignorecase		"don't ignore case when searching
 set title				"show title in console title bar
 set ttyfast				"smoother changes
-"set ttyscroll=0		"turn off scrolling
 set modeline			"last lines in document sets vim mode
 set modelines=3			"number of lines checked for modelines
 set shortmess=atI		"abbreviate messages
@@ -28,13 +24,10 @@ set wrap				"word wrap on
 set linebreak           "keep words intact on the same line when breaking
 set textwidth=0         "turn off hard wrapping
 set colorcolumn=80      "show a line at 80 characters
-"set spell              "automatic spell checking
-"set nolist             "enable line break option
 set whichwrap=b,s,h,l,<,>,[,]	"move freely between files
 set autoindent			"always set autoindent on
 set smartindent			"smart indent
 set number              "add line numbers on the left
-"set noautoindent		"turn off autoindent
 set background=dark     "force the background color
 set wildmenu            "visual autocomplete for command menu
 set showmatch           "show matching [{()}]
@@ -43,14 +36,11 @@ set foldlevelstart=10   "open most folds by default
 set foldnestmax=10      "don't let folds get too crazy
 set foldmethod=indent   "fold based on indent level
 set cursorline          "highlight the current line
-set showcmd             "show the last run command at the bottom
 set noswapfile          "disable swapfile
 syntax enable			"syntax highlighting on
 set bs=2                "backspace fix for some systems
 
 " Allow for true colors on Mac
-"let &t_8f="\<Esc>[38;2;%lu;%lu;%lum"
-"let &t_8b="\<Esc>[48;2;%lu;%lu;%lum"
 set termguicolors
 
 " Allow for italics on Mac
@@ -62,8 +52,6 @@ set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'itchyny/lightline.vim'
-"Plugin 'vim-airline/vim-airline'
-"Plugin 'vim-airline/vim-airline-themes'
 Plugin 'lesliev/vim-inform7'
 Plugin 'flazz/vim-colorschemes'
 Plugin 'godlygeek/tabular'
@@ -77,9 +65,7 @@ Plugin 'tyrannicaltoucan/vim-quantum'
 Plugin 'soli/prolog-vim'
 Plugin 'junegunn/vim-journal'
 Plugin 'tpope/vim-surround'
-Plugin 'scrooloose/syntastic'
 Plugin 'altercation/vim-colors-solarized'
-"Plugin 'ackyshake/spacegray.vim'
 Plugin 'gsiano/vmux-clipboard'
 Plugin 'w0rp/ale'
 Plugin 'lervag/vimtex'
@@ -97,82 +83,13 @@ filetype plugin indent on    " required
 " Settings for vim-tex
 let g:tex_flavor = 'latex'
 
-" Settings for Airline Statusbar
-"let g:airline#extensions#tabline#enabled = 1
-"let g:airline#extensions#tabline#left_sep = ' '
-"let g:airline#extensions#tabline#left_alt_sep = '|'
-"let g:airline_powerline_fonts = 1
-"let g:airline_section_x = '%{PencilMode()}'
-
 " Settings for Ale Linter
 let g:ale_completion_enabled = 1
 
 " Enable for Night Owl
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1  " enable for nvim
-"let g:airline_theme = 'night_owl'
 let g:lightline = { 'colorscheme': 'nightowl' }
 colorscheme night-owl
-
-" Enable for Nord Theme
-"let g:airline_theme = 'nord'
-"let g:nord_italic = 1
-"let g:nord_italic_comments = 1
-"let g:nord_cursor_line_number_background = 1
-"let g:nord_underline = 1
-"let g:nord_uniform_status_lines = 1
-"let g:nord_uniform_diff_background = 1
-"let g:nord_bold = 1
-"let g:nord_bold_vertical_split_line = 1
-"let g:lightline = { 'colorscheme' : 'nord' }
-"colorscheme nord
-
-" Enable for Solarized Theme
-"set background=dark
-"let g:airline_theme='solarized_flood'
-"let g:solarized_termcolors=256
-"let g:solarized_termtrans=1
-"let g:solarized_bold=1
-"let g:solarized_italic=1
-"let g:solarized_underline=1
-"let g:solarized_contrast='normal'
-"let g:solarized_visibility='normal'
-"colorscheme solarized8
-
-" Enable for vim One
-"let g:airline_theme='one'
-"let g:one_allow_italics = 1 " I love italic for comments
-"let g:one_allow_underline = 1
-"colorscheme one
-
-" Enable for Gruvbox Theme
-"colorscheme gruvbox
-"let g:airline_theme = 'gruvbox'
-"let g:gruvbox_termcolors = '256'
-"let g:gruvbox_contrast_dark = 'hard'
-"let g:gruvbox_italic = 1
-"let g:gruvbox_italicize_comments = 1
-
-" Enable for Hybrid Theme
-"colorscheme hybrid
-"let g:airline_theme = 'tomorrow'
-
-" Enable for Quantum Theme
-"colorscheme quantum
-"let g:airline_theme = 'quantum'
-"let g:quantum_black = 1
-"let g:quantum_italics = 1
-
-" Enable for Spacegray Theme
-"colorscheme spacegray
-"let g:spacegray_use_italics = 1
-"let g:spacegray_low_contrast = 1
-"let g:spacegray_underline_search = 1
-"let g:airline_theme = 'base16_spacemacs'
-
-" Enable for Dracula Theme
-"let g:airline_theme = 'dracula'
-"let g:dracula_italic = 1
-"colorscheme dracula
 
 " GUI Specific Settings
 if has("gui_running")
@@ -180,7 +97,6 @@ if has("gui_running")
     set guioptions-=r
     set guioptions-=m
     set guioptions-=T
-    "set transparency=5
 endif
 
 " TMUX Settings
@@ -209,17 +125,3 @@ if (empty($TMUX))
     set termguicolors
   endif
 endif
-
-" Basic Color Schemes
-"colorscheme elflord
-"colorscheme wombat
-"colorscheme xoria256
-"colorscheme inkpot
-"colorscheme gardener
-"colorscheme simple-dark
-"colorscheme Tomorrow-Night-Eighties
-"colorscheme Tomorrow-Night
-"colorscheme ironman
-"colorscheme coffee
-"colorscheme matrix
-"colorscheme seti

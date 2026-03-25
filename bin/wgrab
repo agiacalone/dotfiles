@@ -17,4 +17,4 @@ if [ ! $URL ]
     exit
 fi
 
-wget -r –level=0 -E –ignore-length -x -k -p -erobots=off -np -N $URL
+wget -r --level=0 -E --ignore-length -x -k -p -erobots=off -np -N $URL

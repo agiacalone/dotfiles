@@ -19,7 +19,7 @@ altscreen on
 #term screen-256color
 term screen
 
-# Monoitor message for activity
+# Monitor message for activity
 defmonitor on   # always use window monitoring
 activity  "activity in %n (%t) [%w:%s]~"
 bell_msg   "bell     in %n (%t) [%w:%s]~"

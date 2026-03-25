@@ -5,10 +5,10 @@ sudo apt-get update
 sudo apt-get dist-upgrade -y
 
 # Install dev tools
-sudo apt-get install -y netcat nmap build-essential bison flex bison-doc gawk git pv task taskd tasksh git curl wget
+sudo apt-get install -y netcat nmap build-essential bison flex bison-doc gawk git pv task git curl wget
 
 # Install programming languages
-sudo apt-get install -y gfortran fort77 erlang swi-prolog clojure fp-ide gcj-4.9-jre-headless clojure1.6 ghc ghc-doc haskell-doc alex happy
+sudo apt-get install -y gfortran erlang swi-prolog clojure fp-ide default-jdk ghc ghc-doc haskell-doc alex happy
 
 # Install some libraries
 sudo apt-get install -y libgl1-mesa-dev libglc-dev freeglut3-dev libedit-dev libglw1-mesa libglw1-mesa-dev
@@ -35,7 +35,7 @@ sudo apt-get install -y lynx elinks links gopher
 sudo apt-get install -y ash ksh tcsh csh zsh zsh-doc
 
 # Install news programs
-sudo apt-get install -y newsbeuter slrn
+sudo apt-get install -y newsboat slrn
 
 # Install chat programs
 sudo apt-get install -y pidgin pidgin-otr finch irssi weechat irssi-scripts znc tf5 tintin++
@@ -53,8 +53,8 @@ curl -L https://github.com/hbin/top-programming-fonts/raw/master/install.sh | ba
 # Install music programs
 sudo apt-get install -y pianobar pithos vlc
 
-# Install LAMP server
-sudo apt-get install -y lamp-server^
+# Install LAMP server (individual packages to avoid interactive meta-package)
+sudo apt-get install -y apache2 mysql-server php php-mysql libapache2-mod-php
 
 # Generate the SSH key
 #ssh-keygen

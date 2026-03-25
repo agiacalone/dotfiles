@@ -73,10 +73,10 @@ brew install bison
 brew install flex
 brew install tintin
 brew install tinyfugue
-brew install youtube-dl
+brew install yt-dlp
 brew install rtorrent
 brew install speedtest-cli
-brew install aircrak-ng
+brew install aircrack-ng
 brew install gallery-dl
 brew install zsh-git-prompt
 brew install zsh-completions
@@ -95,7 +95,7 @@ brew install bsdgames-osx
 
 # GUI stuff
 brew install vlc
-brew insatll docker
+brew install docker
 brew install multipass
 brew install --cask lagrange
 brew install --cask iterm2
@@ -158,7 +158,6 @@ brew install --cask cryptomator
 brew install --cask mountain-duck
 brew install --cask vmware-fusion
 brew install zsh-syntax-highlighting
-brew install chirp
 
 # Fonts
 brew tap homebrew/cask-fonts
@@ -197,6 +196,6 @@ defaults write NSGlobalDomain AppleShowAllExtensions -bool true
 defaults write com.apple.finder ShowStatusBar -bool true
 defaults write com.apple.finder QLEnableTextSelection -bool true
 defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
-killAll Finder
+killall Finder
 
 # The initial installation setup should be complete!

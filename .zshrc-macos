@@ -1,12 +1,20 @@
-# Script for iTerm2 integration
+# macOS-specific zsh configuration
+
+# iTerm2 shell integration
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
+# Homebrew GNU coreutils and local bin
+export PATH="$(brew --prefix coreutils)/libexec/gnubin:/usr/local/bin:$PATH"
+
+# Path for Visual Studio Code shell integration
+export PATH="$PATH:/Applications/VSCodium.app/Contents/Resources/app/bin"
+
+# Use terminal for GPG
+export GPG_TTY=$(tty)
+
+# Homebrew zsh completions
 if type brew &>/dev/null; then
     FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
     autoload -Uz compinit
     compinit
 fi
-
-# Enable for tmux support on macos
-export LANG=en_US.UTF-8
-export LC_CTYPE=en_US.UTF-8
