@@ -22,7 +22,7 @@ export LC_CTYPE=en_US.UTF-8
 
 DISABLE_UPDATE_PROMPT='true'
 
-export PATH="${PATH}:$HOME/bin"
+export PATH="$HOME/.local/bin:$HOME/bin:/usr/local/sbin:$PATH"
 
 # Color for term
 export CLICOLOR="Yes"
@@ -51,5 +51,3 @@ esac
 # load the alias file
 source ~/.aliases
 
-export PATH="/usr/local/sbin:$PATH"
-export PATH="/usr/local/opt/ruby/bin:$PATH"
