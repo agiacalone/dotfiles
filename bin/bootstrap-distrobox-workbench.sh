@@ -20,7 +20,7 @@ DEFAULT_SHELL_ZSH="${DEFAULT_SHELL_ZSH:-1}"
 PKGS_BASE=(
   # build / dev
   gcc gcc-c++ make cmake gdb
-  git git-lfs
+  git gh git-lfs
   rust cargo
 
   # editor / terminal
