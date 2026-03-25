@@ -22,7 +22,11 @@ for item in "$DOTFILES_DIR"/.[^.]*; do
     [[ "$name" == ".git" || "$name" == ".github" ]] && continue
     cp -Rv "$item" "$HOME"/
 done
-# Copy non-dot files
-cp -Rv "$DOTFILES_DIR"/* "$HOME"/
+# Copy non-dot files, excluding CLAUDE.md
+for item in "$DOTFILES_DIR"/*; do
+    name=$(basename "$item")
+    [[ "$name" == "CLAUDE.md" ]] && continue
+    cp -Rv "$item" "$HOME"/
+done
 
 echo "Done."
