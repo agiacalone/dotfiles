@@ -1,0 +1,19 @@
+#!/bin/bash
+set -euo pipefail
+
+CONFIG_FILE="/mnt/es2/opt/mlbt/mlbt.toml"
+IMAGE="ghcr.io/mlb-rs/mlbt"
+
+# Validate config file exists
+if [[ ! -f "$CONFIG_FILE" ]]; then
+    echo "Error: Config file not found at $CONFIG_FILE" >&2
+    exit 1
+fi
+
+# Pull latest image
+docker pull "$IMAGE"
+
+# Run container with mounted config
+docker run -it --rm \
+    -v "$CONFIG_FILE:/root/.config/mlbt/mlbt.toml:ro" \
+    "$IMAGE"
