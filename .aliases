@@ -19,3 +19,4 @@ alias dcp='docker compose pull && docker compose up -d --remove-orphans && docke
 alias lsh='ls -lah'
 alias curl='curl -w "\n"'
 alias whatsmyip='curl ifconfig.me/ip'
+alias mlbt='docker run -it --rm --name mlbt ghcr.io/mlb-rs/mlbt'
