@@ -64,6 +64,7 @@ Plugin 'gsiano/vmux-clipboard'
 Plugin 'w0rp/ale'
 Plugin 'lervag/vimtex'
 Plugin 'haishanh/night-owl.vim'
+Plugin 'morhetz/gruvbox'
 Plugin 'preservim/nerdtree'
 Plugin 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plugin 'tpope/vim-obsession'
@@ -82,10 +83,11 @@ let g:tex_flavor = 'latex'
 " Settings for Ale Linter
 let g:ale_completion_enabled = 1
 
-" Night Owl theme
+" Gruvbox theme
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-let g:lightline = { 'colorscheme': 'nightowl' }
-colorscheme night-owl
+let g:gruvbox_italic=1
+let g:lightline = { 'colorscheme': 'gruvbox' }
+colorscheme gruvbox
 
 " GUI Specific Settings
 if has("gui_running")
