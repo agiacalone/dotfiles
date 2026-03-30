@@ -52,4 +52,5 @@ Prefix key is `Ctrl-A` (not the default `Ctrl-B`). Session persistence via tmux-
 `README.md`, `.passwords`, and `.DS_Store` are intentionally excluded from the repository.
 
 ## IMPORTANT!
+
 Always use PGP key signing when committing repositories
