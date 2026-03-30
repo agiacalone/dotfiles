@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Remove macOS junk files (._* AppleDouble files and .DS_Store) left on Linux filesystems
+
+TARGET="${1:-.}"
+
+if [ ! -d "$TARGET" ]; then
+    echo "Error: '$TARGET' is not a directory" >&2
+    exit 1
+fi
+
+echo "Scanning '$TARGET' for macOS junk files..."
+
+mapfile -t files < <(find "$TARGET" \( -name "._*" -o -name ".DS_Store" \) -type f)
+
+if [ "${#files[@]}" -eq 0 ]; then
+    echo "No macOS junk files found."
+    exit 0
+fi
+
+for file in "${files[@]}"; do
+    echo "Removing: $file"
+    rm -- "$file"
+done
+
+echo "Removed ${#files[@]} file(s)."
