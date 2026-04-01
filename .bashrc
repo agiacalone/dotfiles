@@ -90,3 +90,6 @@ export PATH=$PATH:$GOBIN
 
 # Sets the News Server Environment as required by slrn
 NNTPSERVER='news.eternal-september.org' && export NNTPSERVER
+
+#source $HOME/.aliases
+source $HOME/.aliases-local
