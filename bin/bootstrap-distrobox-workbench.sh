@@ -38,17 +38,25 @@ PKGS_BASE=(
 
   # data / net / archives
   jq yq
-  wget
-  curl
-  unzip
+  wget curl
+  rtorrent
+  unzip unrar
   bind-utils
 
   # debug / introspection
   strace
   file
 
+  # fun
+  bsd-games nethack
+  fortune
+
   # python (handy everywhere)
   python3 python3-pip
+
+  # GUI programs
+  dosbox-staging
+
 )
 
 # --- Optional extras (space-separated, e.g. EXTRA_PKGS="htop strace") ---
