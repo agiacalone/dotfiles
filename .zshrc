@@ -51,3 +51,5 @@ esac
 # load the alias file
 source ~/.aliases
 
+# load env for claude code
+source ~/.claude/env
