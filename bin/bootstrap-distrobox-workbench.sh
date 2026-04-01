@@ -40,7 +40,7 @@ PKGS_BASE=(
   jq yq
   wget
   curl
-  unzip
+  unzip unrar
   bind-utils
 
   # debug / introspection
