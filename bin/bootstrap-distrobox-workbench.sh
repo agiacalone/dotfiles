@@ -38,8 +38,8 @@ PKGS_BASE=(
 
   # data / net / archives
   jq yq
-  wget
-  curl
+  wget curl
+  rtorrent
   unzip unrar
   bind-utils
 
