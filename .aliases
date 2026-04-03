@@ -2,6 +2,7 @@
 alias lah='ls -lah'
 alias sl='ls'
 alias ls='ls -hG --color'
+alias lls='ls -lahG --color'
 alias python='python3'
 alias dosbox='dosbox --conf "./dosbox-staging.conf"'
 alias slrn='slrn -h news.eternal-september.org -f ~/.jnewsrc-es -i ~/.slrnrc'
