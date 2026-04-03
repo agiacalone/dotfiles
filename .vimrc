@@ -86,6 +86,9 @@ let g:ale_completion_enabled = 1
 " Gruvbox theme
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 let g:gruvbox_italic=1
+let g:gruvbox_bold=1
+let g:gruvbox_improved_strings=1
+let g:indentLine_setConceal=0
 let g:lightline = { 'colorscheme': 'gruvbox' }
 colorscheme gruvbox
 
