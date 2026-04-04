@@ -53,3 +53,6 @@ source ~/.aliases
 
 # load env for claude code
 source ~/.claude/env
+
+# load local env (not synced)
+source ~/.zshrc-local
