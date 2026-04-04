@@ -56,6 +56,7 @@ PKGS_BASE=(
 
   # GUI programs
   dosbox-staging
+  pulseaudio-utils
 
 )
 
