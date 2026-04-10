@@ -1,7 +1,7 @@
 # Fedora/Kinoite-specific zsh configuration
 
 # Load Nord theme for ls colors
-test -r ~/.dir_colors && eval $(dircolors ~/.dir_colors)
+test -r ~/.dir_colors && eval "$(dircolors ~/.dir_colors)"
 
 # Use terminal for GPG
 export GPG_TTY=$(tty)
