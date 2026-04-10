@@ -23,24 +23,26 @@ return {
         automatic_installation = true,
       })
 
-      local lspconfig    = require("lspconfig")
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
       local on_attach = function(_, bufnr)
         local map = function(keys, func, desc)
           vim.keymap.set("n", keys, func, { buffer = bufnr, desc = "LSP: " .. desc })
         end
-        map("gd",          vim.lsp.buf.definition,   "Go to Definition")
-        map("K",           vim.lsp.buf.hover,         "Hover Documentation")
-        map("gr",          vim.lsp.buf.references,    "Go to References")
-        map("<leader>rn",  vim.lsp.buf.rename,        "Rename")
-        map("<leader>ca",  vim.lsp.buf.code_action,   "Code Action")
+        map("gd",         vim.lsp.buf.definition,  "Go to Definition")
+        map("K",          vim.lsp.buf.hover,        "Hover Documentation")
+        map("gr",         vim.lsp.buf.references,   "Go to References")
+        map("<leader>rn", vim.lsp.buf.rename,       "Rename")
+        map("<leader>ca", vim.lsp.buf.code_action,  "Code Action")
       end
 
+      -- Use native Neovim 0.11 LSP API (lspconfig provides server defaults,
+      -- vim.lsp.config/enable replaces the deprecated lspconfig[server].setup())
       local servers = { "marksman", "clangd", "bashls", "texlab" }
       for _, server in ipairs(servers) do
-        lspconfig[server].setup({ capabilities = capabilities, on_attach = on_attach })
+        vim.lsp.config(server, { capabilities = capabilities, on_attach = on_attach })
       end
+      vim.lsp.enable(servers)
     end,
   },
 
@@ -108,18 +110,23 @@ return {
     dependencies = { "nvim-lua/plenary.nvim" },
     config = function()
       local null_ls = require("null-ls")
-      null_ls.setup({
-        sources = {
-          -- Markdown
-          null_ls.builtins.diagnostics.markdownlint,  -- comment out if markdownlint not installed
-          null_ls.builtins.diagnostics.vale,           -- comment out if vale not installed
-          -- Shell
-          null_ls.builtins.diagnostics.shellcheck,
-          -- C/C++: clangd (LSP) already provides C/C++ diagnostics; cppcheck has no none-ls builtin
-          -- LaTeX
-          null_ls.builtins.diagnostics.chktex,
-        },
-      })
+      local sources = {}
+
+      -- Only register sources where the underlying binary is installed
+      local function add(builtin, bin)
+        if vim.fn.executable(bin) == 1 then
+          table.insert(sources, builtin)
+        end
+      end
+
+      -- Markdown (builtins confirmed present in current none-ls)
+      add(null_ls.builtins.diagnostics.markdownlint, "markdownlint")
+      add(null_ls.builtins.diagnostics.vale,         "vale")
+      -- Shell: shellcheck moved to none-ls-extras.nvim; bashls LSP handles diagnostics
+      -- LaTeX: chktex moved to none-ls-extras.nvim; texlab LSP handles diagnostics
+      -- C/C++: clangd LSP handles diagnostics
+
+      null_ls.setup({ sources = sources })
     end,
   },
 }
