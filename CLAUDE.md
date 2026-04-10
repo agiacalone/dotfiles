@@ -45,7 +45,7 @@ Common aliases live in `.aliases`, sourced from the shell configs.
 
 ## Tmux
 
-Prefix key is `Ctrl-A` (not the default `Ctrl-B`). Session persistence via tmux-resurrect and tmux-continuum.
+Prefix key is `Ctrl-A` (not the default `Ctrl-B`); `Ctrl-B` is set as a secondary prefix for ShadowTerm iOS app compatibility. Session persistence via tmux-resurrect and tmux-continuum.
 
 ## .gitignore
 
