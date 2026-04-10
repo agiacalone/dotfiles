@@ -54,6 +54,14 @@ PKGS_BASE=(
   # python (handy everywhere)
   python3 python3-pip
 
+  # javascript (needed for markdown-preview.nvim and npm-based tools)
+  nodejs npm
+
+  # writing / linting (used by neovim LSP and none-ls)
+  latexmk
+  texlive-chktex
+  ShellCheck
+
   # GUI programs
   dosbox-staging
   pulseaudio-utils
@@ -132,6 +140,37 @@ if [[ "$DEFAULT_SHELL_ZSH" == "1" ]]; then
   echo "[*] Setting default shell to zsh inside container..."
   inbox_user "command -v zsh >/dev/null && (chsh -s \"\$(command -v zsh)\" \"\$(whoami)\" || true)"
 fi
+
+# === Nerd Fonts ===
+echo "[*] Installing Nerd Fonts (Hack, JetBrains Mono)..."
+inbox_user "mkdir -p ~/.local/share/fonts"
+inbox_user "
+  BASE='https://github.com/ryanoasis/nerd-fonts/releases/latest/download'
+  for font in Hack JetBrainsMono; do
+    zip=\"/tmp/\${font}.zip\"
+    curl -fsSL \"\${BASE}/\${font}.zip\" -o \"\$zip\" && \
+      unzip -o \"\$zip\" -d ~/.local/share/fonts/ '*.ttf' && \
+      echo \"  installed \$font\" || echo \"  FAILED \$font\" >&2
+    rm -f \"\$zip\"
+  done
+  fc-cache -f
+"
+
+# === npm tools ===
+echo "[*] Installing npm-based tools (markdownlint-cli)..."
+inbox_user "npm install -g markdownlint-cli"
+
+# === vale (prose linter, GitHub releases) ===
+echo "[*] Installing vale..."
+inbox_user "
+  VALE_VERSION=\$(curl -fsSL https://api.github.com/repos/errata-ai/vale/releases/latest | python3 -c 'import sys,json; print(json.load(sys.stdin)[\"tag_name\"].lstrip(\"v\"))')
+  if [[ -n \"\$VALE_VERSION\" ]]; then
+    curl -fsSL \"https://github.com/errata-ai/vale/releases/latest/download/vale_\${VALE_VERSION}_Linux_64-bit.tar.gz\" \
+      | tar -xz -C ~/.local/bin vale && echo \"  installed vale \$VALE_VERSION\"
+  else
+    echo \"  FAILED: could not determine vale version\" >&2
+  fi
+"
 
 # === Sanity checks ===
 echo "[*] Quick sanity checks..."
