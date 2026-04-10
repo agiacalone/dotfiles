@@ -4,11 +4,12 @@
 test -r ~/.dir_colors && eval "$(dircolors ~/.dir_colors)"
 
 # Use terminal for GPG
-export GPG_TTY=$(tty)
+export GPG_TTY="$(tty)"
 
 # Flatpak binaries
 export PATH="/var/lib/flatpak/exports/bin:$PATH"
 
 # Fedora-specific aliases
+# excludes filesystem* and setup* to avoid breakage inside Distrobox
 alias sysupdate='sudo dnf upgrade -y --refresh --exclude=filesystem\* --exclude=setup\*'
 alias update-os='sudo rpm-ostree update'

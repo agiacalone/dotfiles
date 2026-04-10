@@ -1,17 +1,22 @@
-# Path to your oh-my-zsh installation.
+# ~/.zshrc — Main zsh config, shared across all machines.
+# OS-specific config is delegated to ~/.zshrc-{macos,fedora,linux,etc.}
+# Local (unsynced) config lives in ~/.zshrc-local
+
+# --- oh-my-zsh setup (must come before source oh-my-zsh.sh) ---
 export ZSH=~/.oh-my-zsh
 
 ZSH_THEME="cypher"
 
 ZSH_DISABLE_COMPFIX="true"
 
+# Plugins: macos plugin excluded (macOS-only; can't be added post-source)
 plugins=(git tmux colored-man-pages mosh)
 
 ZSH_TMUX_DEFAULT_SESSION_NAME=main
 
 DISABLE_UPDATE_PROMPT='true'
 
-# Enable utf-8 for tmux support
+# Locale and PATH must be set before sourcing oh-my-zsh
 export LANG=en_US.UTF-8
 export LC_CTYPE=en_US.UTF-8
 
@@ -19,7 +24,8 @@ export PATH="$HOME/.local/bin:$HOME/bin:/usr/local/sbin:$PATH"
 
 source $ZSH/oh-my-zsh.sh
 
-# Wrap tmux with a nesting guard
+# --- tmux ---
+# Nesting guard: prevents launching tmux inside an existing tmux session
 unalias tmux 2>/dev/null
 tmux() {
   if [[ -n "$TMUX" ]]; then
@@ -29,10 +35,12 @@ tmux() {
   _zsh_tmux_plugin_run "$@"
 }
 
-# Add local timezone
+# --- Environment ---
 export TZ=US/Pacific
 
-# Source OS-specific config automatically
+export NVIM_NERD_FONT=1
+
+# --- OS-specific config ---
 case "$(uname -s)" in
   Darwin)
     [[ -f ~/.zshrc-macos ]] && source ~/.zshrc-macos
@@ -55,14 +63,7 @@ case "$(uname -s)" in
     ;;
 esac
 
-# Nerd Font available on this machine
-export NVIM_NERD_FONT=1
-
-# load the alias file
-source ~/.aliases
-
-# load env for claude code
-source ~/.claude/env
-
-# load local env (not synced)
-source ~/.zshrc-local
+# --- Additional sources ---
+source ~/.aliases         # shared aliases
+source ~/.claude/env      # Claude Code environment
+source ~/.zshrc-local     # machine-local env (not synced)

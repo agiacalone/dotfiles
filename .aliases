@@ -1,23 +1,37 @@
-# My custom aliases
+# ~/.aliases — Shared aliases for all machines.
+# Machine-local overrides live in ~/.aliases.local (not synced).
+# Note: mlbt uses docker here; ~/.aliases.local overrides with podman on Distrobox/Fedora.
+
+# --- ls ---
 alias sl='ls'
 alias ls='ls -h --color'
 alias lls='ls -lah --color'
-alias python='python3'
-alias dosbox='dosbox --conf "./dosbox-staging.conf"'
-alias remind='remind ~/.reminders'
+
+# --- Editors ---
 alias emacs='emacs -nw'
 alias vim='nvim'
+
+# --- System ---
+alias python='python3'
 alias htop='sudo htop'
-alias ytdl='yt-dlp -f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4"'
 alias sudo='sudo --preserve-env=HOME '
+
+# --- Apps ---
+alias dosbox='dosbox --conf "./dosbox-staging.conf"'
+alias remind='remind ~/.reminders'
 alias ws='wolframscript'
 alias pb='pb -c'
-alias bbs='ssh -t circumlunar bbs'
-alias dcp='docker compose pull && docker compose up -d --remove-orphans && docker image prune -f'
+alias ytdl='yt-dlp -f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4"'
+
+# --- Network / web ---
 alias curl='curl -w "\n"'
 alias weather='curl "wttr.in/Los_Angeles"'
 alias whatsmyip='curl ifconfig.me/ip'
+alias bbs='ssh -t circumlunar bbs'
+
+# --- Docker ---
+alias dcp='docker compose pull && docker compose up -d --remove-orphans && docker image prune -f'
 alias mlbt='docker run -it --rm --name mlbt ghcr.io/mlb-rs/mlbt'
 
-# Machine-local aliases (not synced with dotfiles)
+# --- Machine-local aliases (not synced with dotfiles) ---
 [ -f ~/.aliases.local ] && source ~/.aliases.local
