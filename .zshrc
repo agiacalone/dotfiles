@@ -69,6 +69,9 @@ case "$(uname -s)" in
     ;;
 esac
 
+# Nerd Font available on this machine
+export NVIM_NERD_FONT=1
+
 # load the alias file
 source ~/.aliases
 

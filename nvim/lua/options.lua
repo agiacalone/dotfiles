@@ -41,3 +41,6 @@ opt.termguicolors = true
 opt.autoread     = true           -- reload files changed outside vim (used by vim-tmux-focus-events)
 opt.backspace    = "indent,eol,start"
 opt.shortmess:append("atI")
+
+-- Nerd Font availability (set NVIM_NERD_FONT=1 in shell on machines with a Nerd Font)
+vim.g.have_nerd_font = vim.env.NVIM_NERD_FONT == "1"
