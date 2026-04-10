@@ -6,3 +6,7 @@
 
 # MacOS Stuff
 .DS_Store
+
+# Don't sync anything with the -local extension
+*-local
+*.local
