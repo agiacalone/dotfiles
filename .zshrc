@@ -14,7 +14,19 @@ ZSH_DISABLE_COMPFIX="true"
 
 plugins=(git tmux colored-man-pages mosh npm node macos)
 
+ZSH_TMUX_DEFAULT_SESSION_NAME=main
+
 source $ZSH/oh-my-zsh.sh
+
+# Wrap tmux with a nesting guard
+unalias tmux 2>/dev/null
+tmux() {
+  if [[ -n "$TMUX" ]]; then
+    echo "Already inside a tmux session"
+    return 1
+  fi
+  _zsh_tmux_plugin_run "$@"
+}
 
 # Enable utf-8 for tmux support
 export LANG=en_US.UTF-8
