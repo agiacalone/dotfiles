@@ -58,6 +58,15 @@ case "$(uname -s)" in
       [[ -f ~/.zshrc-linux ]] && source ~/.zshrc-linux
     fi
     ;;
+  FreeBSD)
+    [[ -f ~/.zshrc-freebsd ]] && source ~/.zshrc-freebsd
+    ;;
+  OpenBSD)
+    [[ -f ~/.zshrc-openbsd ]] && source ~/.zshrc-openbsd
+    ;;
+  NetBSD)
+    [[ -f ~/.zshrc-netbsd ]] && source ~/.zshrc-netbsd
+    ;;
 esac
 
 # load the alias file
