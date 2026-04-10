@@ -1,5 +1,12 @@
 # macOS-specific zsh configuration
 
+# Initialize Homebrew
+if [[ -x /opt/homebrew/bin/brew ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [[ -x /usr/local/bin/brew ]]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+fi
+
 # iTerm2 shell integration
 export ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=YES
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
@@ -16,6 +23,9 @@ if type brew &>/dev/null; then
     autoload -Uz compinit
     compinit
 fi
+
+# Color for term
+export CLICOLOR="Yes"
 
 # macOS Specific aliases
 alias ubrew='brew update && brew upgrade'
