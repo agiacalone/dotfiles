@@ -12,14 +12,17 @@ export ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=YES
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 # macOS-specific paths
-export PATH="$(brew --prefix coreutils)/libexec/gnubin:/usr/local/opt/ruby/bin:/Applications/VSCodium.app/Contents/Resources/app/bin:$PATH"
+if brew list coreutils &>/dev/null; then
+    export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
+fi
+export PATH="/usr/local/opt/ruby/bin:/Applications/VSCodium.app/Contents/Resources/app/bin:$PATH"
 
 # Use terminal for GPG
-export GPG_TTY=$(tty)
+export GPG_TTY="$(tty)"
 
 # Homebrew zsh completions
 if type brew &>/dev/null; then
-    FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
+    FPATH="$(brew --prefix)/share/zsh-completions:$FPATH"
     autoload -Uz compinit
     compinit
 fi
