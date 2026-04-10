@@ -29,9 +29,6 @@ tmux() {
   _zsh_tmux_plugin_run "$@"
 }
 
-# Add newsserver
-export NNTPSERVER="news.eternal-september.org"
-
 # Add local timezone
 export TZ=US/Pacific
 
