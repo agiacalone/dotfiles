@@ -1,3 +1,10 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 # ~/.zshrc — Main zsh config, shared across all machines.
 # OS-specific config is delegated to ~/.zshrc-{macos,fedora,linux,etc.}
 # Local (unsynced) config lives in ~/.zshrc-local
@@ -5,7 +12,7 @@
 # --- oh-my-zsh setup (must come before source oh-my-zsh.sh) ---
 export ZSH=~/.oh-my-zsh
 
-ZSH_THEME="cypher"
+ZSH_THEME="powerlevel10k/powerlevel10k"
 
 ZSH_DISABLE_COMPFIX="true"
 
@@ -24,46 +31,8 @@ export PATH="$HOME/.local/bin:$HOME/bin:/usr/local/sbin:$PATH"
 
 source $ZSH/oh-my-zsh.sh
 
-# --- Prompt enhancements (extends cypher theme) ---
-ZSH_THEME_GIT_PROMPT_PREFIX=" %{${fg[yellow]}%}["
-ZSH_THEME_GIT_PROMPT_SUFFIX="%{${fg[yellow]}%}]%{${reset_color}%}"
-ZSH_THEME_GIT_PROMPT_DIRTY="%{${fg[red]}%}*"
-ZSH_THEME_GIT_PROMPT_CLEAN=""
-
-_venv_info() {
-  [[ -n "$VIRTUAL_ENV" ]] && echo "%{${fg[cyan]}%}(${VIRTUAL_ENV:t})%{${reset_color}%} "
-}
-
-PROMPT='$(_venv_info)%m %{${fg_bold[red]}%}:: %{${fg[green]}%}%3~$(git_prompt_info)%(1j. %{${fg[cyan]}%}[%j]%{${reset_color}%}.)%(0?. . %{${fg[red]}%}%? )%{${fg[blue]}%}»%{${reset_color}%} '
-
-zmodload zsh/datetime
-_cmd_start=0
-_cmd_delta=""
-
-_cmd_timer_preexec() { _cmd_start=$EPOCHREALTIME }
-
-_cmd_timer_precmd() {
-  if (( _cmd_start > 0 )); then
-    local delta=$(( EPOCHREALTIME - _cmd_start ))
-    _cmd_start=0
-    if (( delta >= 60 )); then
-      local -i m=$(( int(delta) / 60 ))
-      local -i s=$(( int(delta) % 60 ))
-      _cmd_delta="${m}m${s}s  "
-    elif (( delta >= 1 )); then
-      _cmd_delta="$(printf '%.1f' $delta)s  "
-    else
-      _cmd_delta=""
-    fi
-  else
-    _cmd_delta=""
-  fi
-}
-
-preexec_functions=(${preexec_functions:#_cmd_timer_preexec} _cmd_timer_preexec)
-precmd_functions=(${precmd_functions:#_cmd_timer_precmd} _cmd_timer_precmd)
-
-RPROMPT='%F{white}${_cmd_delta}%*%f'
+# --- powerlevel10k ---
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # --- tmux ---
 # Nesting guard: prevents launching tmux inside an existing tmux session
