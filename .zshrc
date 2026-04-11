@@ -75,5 +75,5 @@ esac
 
 # --- Additional sources ---
 source ~/.aliases         # shared aliases
-source ~/.claude/env      # Claude Code environment
-source ~/.zshrc.local     # machine-local env (not synced)
+[[ -f ~/.claude/env ]] && source ~/.claude/env      # Claude Code environment
+[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local     # machine-local env (not synced)
