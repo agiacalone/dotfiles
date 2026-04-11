@@ -53,27 +53,27 @@ export NVIM_NERD_FONT=1
 # --- OS-specific config ---
 case "$(uname -s)" in
   Darwin)
-    [[ -f ~/.zshrc-macos ]] && source ~/.zshrc-macos
+    [[ -f ~/.zshrc.macos ]] && source ~/.zshrc.macos
     ;;
   Linux)
     if [[ -f /etc/fedora-release ]]; then
-      [[ -f ~/.zshrc-fedora ]] && source ~/.zshrc-fedora
+      [[ -f ~/.zshrc.fedora ]] && source ~/.zshrc.fedora
     else
-      [[ -f ~/.zshrc-linux ]] && source ~/.zshrc-linux
+      [[ -f ~/.zshrc.linux ]] && source ~/.zshrc.linux
     fi
     ;;
   FreeBSD)
-    [[ -f ~/.zshrc-freebsd ]] && source ~/.zshrc-freebsd
+    [[ -f ~/.zshrc.freebsd ]] && source ~/.zshrc.freebsd
     ;;
   OpenBSD)
-    [[ -f ~/.zshrc-openbsd ]] && source ~/.zshrc-openbsd
+    [[ -f ~/.zshrc.openbsd ]] && source ~/.zshrc.openbsd
     ;;
   NetBSD)
-    [[ -f ~/.zshrc-netbsd ]] && source ~/.zshrc-netbsd
+    [[ -f ~/.zshrc.netbsd ]] && source ~/.zshrc.netbsd
     ;;
 esac
 
 # --- Additional sources ---
 source ~/.aliases         # shared aliases
 source ~/.claude/env      # Claude Code environment
-source ~/.zshrc-local     # machine-local env (not synced)
+source ~/.zshrc.local     # machine-local env (not synced)
