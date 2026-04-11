@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# nvim-extras-install: bootstraps lazy.nvim (if needed) and syncs all
+# plugins declared in ~/.config/nvim/. Safe to re-run.
+
+if ! command -v nvim &>/dev/null; then
+    echo "Error: nvim not found in PATH" >&2
+    exit 1
+fi
+
+echo "Syncing neovim plugins via lazy.nvim..."
+nvim --headless "+Lazy! sync" +qa
+
+echo "Done."
