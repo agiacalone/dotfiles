@@ -3,8 +3,9 @@
 # Load Nord theme for ls colors
 test -r ~/.dir_colors && eval "$(dircolors ~/.dir_colors)"
 
-# Use terminal for GPG
+# Use terminal for GPG (updatestartuptty refreshes gpg-agent's TTY for tmux)
 export GPG_TTY="$(tty)"
+gpg-connect-agent updatestartuptty /bye >/dev/null 2>&1
 
 # Flatpak binaries
 export PATH="/var/lib/flatpak/exports/bin:$PATH"

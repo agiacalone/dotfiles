@@ -17,8 +17,9 @@ if brew list coreutils &>/dev/null; then
 fi
 export PATH="/usr/local/opt/ruby/bin:/Applications/VSCodium.app/Contents/Resources/app/bin:$PATH"
 
-# Use terminal for GPG
+# Use terminal for GPG (updatestartuptty refreshes gpg-agent's TTY for tmux)
 export GPG_TTY="$(tty)"
+gpg-connect-agent updatestartuptty /bye >/dev/null 2>&1
 
 # Homebrew zsh completions
 if type brew &>/dev/null; then
