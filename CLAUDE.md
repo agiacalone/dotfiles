@@ -49,7 +49,7 @@ Prefix key is `Ctrl-A` (not the default `Ctrl-B`); `Ctrl-B` is set as a secondar
 
 ## .gitignore
 
-`README.md`, `.passwords`, and `.DS_Store` are intentionally excluded from the repository.
+`.claude`, `.passwords`, and `.DS_Store` are intentionally excluded from the repository.
 
 ## IMPORTANT!
 
