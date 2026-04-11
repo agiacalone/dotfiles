@@ -6,8 +6,8 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 
 # ~/.zshrc — Main zsh config, shared across all machines.
-# OS-specific config is delegated to ~/.zshrc-{macos,fedora,linux,etc.}
-# Local (unsynced) config lives in ~/.zshrc-local
+# OS-specific config is delegated to ~/.zshrc.{macos,fedora,linux,etc.}
+# Local (unsynced) config lives in ~/.zshrc.local
 
 # --- oh-my-zsh setup (must come before source oh-my-zsh.sh) ---
 export ZSH=~/.oh-my-zsh
