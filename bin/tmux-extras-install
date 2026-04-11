@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# tmux-extras-install: installs or updates TPM (Tmux Plugin Manager) and
+# all plugins declared in ~/.tmux.conf. Safe to re-run.
+
+TPM_DIR="$HOME/.tmux/plugins/tpm"
+
+if [[ -d "$TPM_DIR/.git" ]]; then
+    echo "Updating TPM..."
+    git -C "$TPM_DIR" pull --ff-only || { echo "Error: failed to update TPM" >&2; exit 1; }
+else
+    echo "Installing TPM..."
+    mkdir -p "$HOME/.tmux/plugins"
+    git clone --depth=1 https://github.com/tmux-plugins/tpm "$TPM_DIR" \
+        || { echo "Error: failed to install TPM" >&2; exit 1; }
+fi
+
+echo "Installing tmux plugins..."
+"$TPM_DIR/bin/install_plugins"
+
+echo "Done. Reload tmux config with: tmux source ~/.tmux.conf"

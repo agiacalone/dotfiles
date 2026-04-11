@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# vim-extras-install: installs or updates Vundle and all plugins declared
+# in ~/.vimrc. Safe to re-run.
+
+VUNDLE_DIR="$HOME/.vim/bundle/Vundle.vim"
+
+if [[ -d "$VUNDLE_DIR/.git" ]]; then
+    echo "Updating Vundle..."
+    git -C "$VUNDLE_DIR" pull --ff-only || { echo "Error: failed to update Vundle" >&2; exit 1; }
+else
+    echo "Installing Vundle..."
+    mkdir -p "$HOME/.vim/bundle"
+    git clone --depth=1 https://github.com/VundleVim/Vundle.vim.git "$VUNDLE_DIR" \
+        || { echo "Error: failed to install Vundle" >&2; exit 1; }
+fi
+
+echo "Installing vim plugins..."
+vim +PluginInstall +qall
+
+echo "Done."
