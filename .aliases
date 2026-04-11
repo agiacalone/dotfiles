@@ -32,7 +32,9 @@ alias bbs='ssh -t circumlunar bbs'
 # --- Docker ---
 alias dcp='docker compose pull && docker compose up -d --remove-orphans && docker image prune -f'
 alias mlbt='docker run -it --rm --name mlbt ghcr.io/mlb-rs/mlbt'
+alias mlbt-podman='host-spawn podman run -it --rm --name mlbt ghcr.io/mlb-rs/mlbt'  
 
 # --- Machine-local aliases (not synced with dotfiles) ---
 [ -f ~/.aliases.local ] && source ~/.aliases.local
 [ -f ~/.aliases-local ] && source ~/.aliases-local
+
