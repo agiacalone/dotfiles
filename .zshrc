@@ -17,7 +17,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 ZSH_DISABLE_COMPFIX="true"
 
 # Plugins: macos plugin excluded (macOS-only; can't be added post-source)
-plugins=(git tmux colored-man-pages mosh)
+plugins=(git tmux colored-man-pages mosh sudo docker docker-compose extract z nmap command-not-found zsh-autosuggestions zsh-syntax-highlighting)
 
 ZSH_TMUX_DEFAULT_SESSION_NAME=main
 
