@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# omz-extras-install: installs external oh-my-zsh plugins and themes not
+# bundled with OMZ. Safe to re-run — skips anything already installed.
+
+ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+
+install_or_update() {
+    local name="$1"
+    local dest="$2"
+    local repo="$3"
+
+    if [[ -d "$dest/.git" ]]; then
+        echo "Updating $name..."
+        git -C "$dest" pull --ff-only || { echo "Error: failed to update $name" >&2; return 1; }
+    else
+        echo "Installing $name..."
+        git clone --depth=1 "$repo" "$dest" || { echo "Error: failed to install $name" >&2; return 1; }
+    fi
+}
+
+install_or_update "powerlevel10k" \
+    "$ZSH_CUSTOM/themes/powerlevel10k" \
+    "https://github.com/romkatv/powerlevel10k.git"
+
+install_or_update "zsh-autosuggestions" \
+    "$ZSH_CUSTOM/plugins/zsh-autosuggestions" \
+    "https://github.com/zsh-users/zsh-autosuggestions.git"
+
+install_or_update "zsh-syntax-highlighting" \
+    "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" \
+    "https://github.com/zsh-users/zsh-syntax-highlighting.git"
+
+echo "Done. Restart your shell or run: source ~/.zshrc"
