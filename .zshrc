@@ -29,6 +29,13 @@ export LC_CTYPE=en_US.UTF-8
 
 export PATH="$HOME/.local/bin:$HOME/bin:/usr/local/sbin:$PATH"
 
+# Homebrew must be in PATH before oh-my-zsh loads so the tmux plugin can find tmux
+if [[ -x /opt/homebrew/bin/brew ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [[ -x /usr/local/bin/brew ]]; then
+  eval "$(/usr/local/bin/brew shellenv)"
+fi
+
 source $ZSH/oh-my-zsh.sh
 
 # --- powerlevel10k ---
