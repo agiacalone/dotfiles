@@ -2,6 +2,13 @@
 return {
   -- Colorscheme
   {
+	"folke/tokyonight.nvim",
+	lazy = false,
+	priority = 1000,
+	opts = {},
+  },
+
+  {
     "ellisonleao/gruvbox.nvim",
     priority = 1000,
     config = function()
@@ -68,6 +75,17 @@ return {
     config = function()
       require("ibl").setup()
     end,
+  },
+
+  {
+    "zaldih/themery.nvim",
+    lazy = false,
+    config = function()
+      require("themery").setup({
+		themes = {"gruvbox", "tokyonight"}, -- Your list of installed colorschemes.
+		livePreview = true, -- Apply theme while picking. Default to true.       -- add the config here
+      })
+    end
   },
 
   -- Start screen
