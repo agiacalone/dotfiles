@@ -35,6 +35,10 @@ alias dcp='docker compose pull && docker compose up -d --remove-orphans && docke
 alias mlbt='docker run -it --rm --name mlbt ghcr.io/mlb-rs/mlbt'
 alias mlbt-podman='host-spawn podman run -it --rm --name mlbt ghcr.io/mlb-rs/mlbt'  
 
+# --- Claude Code ---
+alias claude-pro='claude'         # uses OAuth/keychain (claude.ai Pro)
+alias claude-api='claude --bare'  # uses API key from private config, skips keychain
+
 # --- Machine-local aliases (not synced with dotfiles) ---
 [ -f ~/.aliases.local ] && source ~/.aliases.local
 
