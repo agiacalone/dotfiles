@@ -1,35 +1,24 @@
 # macOS-specific zsh configuration
 
-# Initialize Homebrew
-if [[ -x /opt/homebrew/bin/brew ]]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-elif [[ -x /usr/local/bin/brew ]]; then
-    eval "$(/usr/local/bin/brew shellenv)"
+# iTerm2-specific shell integration stays in the macOS layer.
+if [[ "${TERM_PROGRAM:-}" == "iTerm.app" ]]; then
+    export ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=YES
+    test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 fi
-
-# iTerm2 shell integration
-export ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=YES
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 # macOS-specific paths
-if brew list coreutils &>/dev/null; then
-    export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
+if command -v brew >/dev/null 2>&1 && brew list coreutils &>/dev/null; then
+    path=("$(brew --prefix coreutils)/libexec/gnubin" $path)
 fi
-export PATH="/usr/local/opt/ruby/bin:/Applications/VSCodium.app/Contents/Resources/app/bin:$PATH"
+path=(/usr/local/opt/ruby/bin /Applications/VSCodium.app/Contents/Resources/app/bin $path)
 
 # Use terminal for GPG (updatestartuptty refreshes gpg-agent's TTY for tmux)
 export GPG_TTY="$(tty)"
 gpg-connect-agent updatestartuptty /bye >/dev/null 2>&1
 
-# Homebrew zsh completions
-if type brew &>/dev/null; then
-    FPATH="$(brew --prefix)/share/zsh-completions:$FPATH"
-    autoload -Uz compinit
-    compinit
-fi
-
 # Color for term
-export CLICOLOR="Yes"
+export CLICOLOR=1
+export LSCOLORS='GxFxCxDxBxegedabagaced'
 
 # macOS Specific aliases
 alias ubrew='brew update && brew upgrade'

@@ -1,0 +1,162 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+usage() {
+  cat <<'EOF'
+Usage: weechat-znc-setup [--no-relay-cert]
+
+Prompts for ZNC connection details and WeeChat identity settings, stores the
+passwords in WeeChat secured data, and optionally generates
+~/.config/weechat/tls/relay.pem for the relay plugin.
+EOF
+}
+
+need_relay_cert=1
+
+for arg in "$@"; do
+  case "$arg" in
+    --no-relay-cert)
+      need_relay_cert=0
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      printf 'Unknown option: %s\n' "$arg" >&2
+      usage >&2
+      exit 1
+      ;;
+  esac
+done
+
+if ! command -v weechat >/dev/null 2>&1; then
+  printf 'weechat is not installed or not in PATH\n' >&2
+  exit 1
+fi
+
+if pgrep -x weechat >/dev/null 2>&1; then
+  printf 'Close WeeChat before running this setup script\n' >&2
+  exit 1
+fi
+
+prompt() {
+  local label="$1"
+  local default="${2-}"
+  local value
+
+  if [[ -n "$default" ]]; then
+    read -r -p "$label [$default]: " value
+    printf '%s' "${value:-$default}"
+  else
+    read -r -p "$label: " value
+    printf '%s' "$value"
+  fi
+}
+
+prompt_secret() {
+  local label="$1"
+  local value
+
+  read -r -s -p "$label: " value
+  printf '\n' >&2
+  printf '%s' "$value"
+}
+
+znc_host="$(prompt 'ZNC host' 'services.tilde.club')"
+znc_port="$(prompt 'ZNC port' '6699')"
+znc_tls_answer="$(prompt 'Use TLS (on/off)' 'on')"
+nick="$(prompt 'IRC nick' 'anthonyg')"
+ident="$(prompt 'IRC ident' "$nick")"
+realname="$(prompt 'Real name' "$nick")"
+znc_user="$(prompt 'ZNC account user' "$nick")"
+znc_client="$(prompt 'ZNC client name' 'weechat')"
+znc_network="$(prompt 'ZNC network name' 'libera')"
+znc_password="$(prompt_secret 'ZNC password')"
+relay_password="$(prompt_secret 'Relay password')"
+secure_passphrase="$(prompt_secret 'WeeChat secure passphrase')"
+
+case "$znc_tls_answer" in
+  on|ON|yes|YES|true|TRUE|1)
+    znc_tls='on'
+    ;;
+  off|OFF|no|NO|false|FALSE|0)
+    znc_tls='off'
+    ;;
+  *)
+    printf 'TLS answer must be on or off\n' >&2
+    exit 1
+    ;;
+esac
+
+if [[ -z "$znc_host" || -z "$znc_port" || -z "$nick" || -z "$ident" || -z "$realname" || -z "$znc_user" || -z "$znc_client" || -z "$znc_network" || -z "$znc_password" || -z "$relay_password" || -z "$secure_passphrase" ]]; then
+  printf 'All fields are required\n' >&2
+  exit 1
+fi
+
+if ! [[ "$znc_port" =~ ^[0-9]+$ ]]; then
+  printf 'ZNC port must be numeric\n' >&2
+  exit 1
+fi
+
+config_dir="${WEECHAT_HOME:-$HOME/.config/weechat}"
+tls_dir="${config_dir}/tls"
+znc_username="${znc_user}@${znc_client}/${znc_network}"
+
+if [[ "$need_relay_cert" -eq 1 ]]; then
+  if ! command -v openssl >/dev/null 2>&1; then
+    printf 'openssl is required to generate the relay certificate\n' >&2
+    exit 1
+  fi
+
+  mkdir -p "$tls_dir"
+
+  tmpdir="$(mktemp -d)"
+  trap 'rm -rf "$tmpdir"' EXIT
+
+  hostname_value="$(hostname -f 2>/dev/null || hostname || printf 'localhost')"
+
+  openssl req \
+    -x509 \
+    -nodes \
+    -newkey rsa:4096 \
+    -sha256 \
+    -days 3650 \
+    -subj "/CN=${hostname_value}" \
+    -keyout "$tmpdir/relay.key" \
+    -out "$tmpdir/relay.crt" >/dev/null 2>&1
+
+  cat "$tmpdir/relay.key" "$tmpdir/relay.crt" > "$tls_dir/relay.pem"
+  chmod 600 "$tls_dir/relay.pem"
+fi
+
+commands=(
+  "/secure passphrase ${secure_passphrase}"
+  "/secure set znc_password ${znc_password}"
+  "/secure set relay_password ${relay_password}"
+  "/secure set irc_nick ${nick}"
+  "/secure set irc_ident ${ident}"
+  "/secure set irc_realname ${realname}"
+  "/set irc.server.znc.addresses ${znc_host}/${znc_port}"
+  "/set irc.server.znc.tls ${znc_tls}"
+  "/set irc.server.znc.nicks ${nick},${nick}_,${nick}__"
+  "/set irc.server.znc.username ${znc_username}"
+  '/set irc.server.znc.realname ${sec.data.irc_realname}'
+  '/set irc.server.znc.password ${sec.data.znc_password}'
+  "/save"
+  "/quit"
+)
+
+weechat_args=()
+for command in "${commands[@]}"; do
+  weechat_args+=(-r "$command")
+done
+
+weechat "${weechat_args[@]}"
+
+printf 'WeeChat ZNC settings updated.\n'
+printf 'ZNC username format: %s\n' "$znc_username"
+if [[ "$need_relay_cert" -eq 1 ]]; then
+  printf 'Relay certificate written to %s\n' "$tls_dir/relay.pem"
+fi

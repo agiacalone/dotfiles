@@ -37,6 +37,9 @@ Personal dotfiles for macOS and Linux (Fedora/Kinoite, Ubuntu/Debian). Deployed 
 ### Mutt
 Multi-account email (Gmail + SDF) with custom 256-color themes and a mailcap for attachments.
 
+### WeeChat
+Libera.Chat-first WeeChat profile with secure SASL login placeholders, relay on port `9001`, service aliases, and a denser IRC UI. Setup notes: `docs/weechat-libera.md`
+
 ### VLC Extensions
 - **Super Skipper** — auto-skip intros/outros
 - Playlist scripts for SomaFM, FIP Radio, Flux FM, RadioTime, StreamTheWorld, and more
@@ -84,6 +87,7 @@ bash ~/git/dotfiles/bin/mac-brew-gnu.sh   # install GNU tools via Homebrew
 | `.vimrc` | Vim/Neovim config + Vundle plugins |
 | `.config/nvim/` | Neovim Lua config |
 | `.muttrc` | Mutt email client (multi-account) |
+| `.config/weechat/` | WeeChat config for Libera.Chat + relay |
 | `.p10k.zsh` | Powerlevel10k prompt config |
 | `bin/` | Utility scripts deployed to `~/bin/` |
 | `extra-configs/` | Privoxy, Squid, Tor, Newsboat (not auto-deployed) |
