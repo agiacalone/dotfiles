@@ -16,9 +16,9 @@ return {
       require("mason-lspconfig").setup({
         ensure_installed = {
           "marksman",       -- Markdown
-          "clangd",         -- C/C++
           "bashls",         -- Shell
           "texlab",         -- LaTeX
+          -- clangd installed via system package manager (clang-tools-extra / Xcode CLT)
         },
         automatic_installation = true,
       })
@@ -38,7 +38,7 @@ return {
 
       -- Use native Neovim 0.11 LSP API (lspconfig provides server defaults,
       -- vim.lsp.config/enable replaces the deprecated lspconfig[server].setup())
-      local servers = { "marksman", "clangd", "bashls", "texlab" }
+      local servers = { "marksman", "bashls", "texlab", "clangd" }
       for _, server in ipairs(servers) do
         vim.lsp.config(server, { capabilities = capabilities, on_attach = on_attach })
       end
