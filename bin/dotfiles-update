@@ -1,49 +1,80 @@
 #!/bin/bash
+# dotfiles-update: clone or update the dotfiles repo and install files to $HOME.
 
-# dotfiles-update: clones or updates the dotfiles repo and copies files to $HOME.
+set -euo pipefail
 
 DOTFILES_DIR="$HOME/git/dotfiles"
 DOTFILES_REPO="https://github.com/agiacalone/dotfiles.git"
+PROGNAME="${0##*/}"
+
+verbose=0
+
+usage() {
+    cat <<EOF
+Usage: $PROGNAME [-v] [-h]
+
+Clone or update the dotfiles repo and install files to \$HOME.
+
+  -v, --verbose   show each file as it is copied
+  -h, --help      display this help and exit
+EOF
+}
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -v|--verbose) verbose=1 ;;
+        -h|--help)    usage; exit 0 ;;
+        --)           shift; break ;;
+        -*)           echo "$PROGNAME: unknown option: $1" >&2; exit 2 ;;
+        *)            break ;;
+    esac
+    shift
+done
+
+cp_flags=(-R)
+(( verbose )) && cp_flags=(-Rv)
 
 mkdir -p "$HOME/git"
 
 if [[ ! -d "$DOTFILES_DIR/.git" ]]; then
-    echo "Cloning dotfiles repo..."
-    git clone "$DOTFILES_REPO" "$DOTFILES_DIR" || { echo "Error: git clone failed" >&2; exit 1; }
+    echo "cloning dotfiles repo..." >&2
+    git clone "$DOTFILES_REPO" "$DOTFILES_DIR"
 else
-    echo "Pulling latest changes..."
-    git -C "$DOTFILES_DIR" pull || { echo "Error: git pull failed" >&2; exit 1; }
+    echo "pulling latest changes..." >&2
+    git -C "$DOTFILES_DIR" pull
 fi
 
-echo "Copying dotfiles to $HOME..."
-# Copy dot files, excluding .git and .github
+echo "copying dotfiles to $HOME..." >&2
+
+shopt -s nullglob
+
+# dot files, excluding .git and .github
 for item in "$DOTFILES_DIR"/.[^.]*; do
-    name=$(basename "$item")
+    name="${item##*/}"
     [[ "$name" == ".git" || "$name" == ".github" ]] && continue
-    cp -Rv "$item" "$HOME"/
-done
-# Copy non-dot files, excluding CLAUDE.md
-for item in "$DOTFILES_DIR"/*; do
-    name=$(basename "$item")
-    [[ "$name" == "CLAUDE.md" ]] && continue
-    cp -Rv "$item" "$HOME"/
+    cp "${cp_flags[@]}" "$item" "$HOME"/
 done
 
-echo "Fixing permissions..."
+# non-dot files, excluding CLAUDE.md
+for item in "$DOTFILES_DIR"/*; do
+    name="${item##*/}"
+    [[ "$name" == "CLAUDE.md" ]] && continue
+    cp "${cp_flags[@]}" "$item" "$HOME"/
+done
+
+echo "fixing permissions..." >&2
 
 # ~/.ssh — SSH is strict: wrong perms cause silent auth failures
 if [[ -d "$HOME/.ssh" ]]; then
     chmod 700 "$HOME/.ssh"
-    chmod 600 "$HOME/.ssh/config" 2>/dev/null
-    chmod 600 "$HOME/.ssh/authorized_keys" 2>/dev/null
-    chmod 644 "$HOME/.ssh/known_hosts" 2>/dev/null
-    # Private keys: no extension or ending in _key; public keys: .pub
+    [[ -f "$HOME/.ssh/config" ]]          && chmod 600 "$HOME/.ssh/config"
+    [[ -f "$HOME/.ssh/authorized_keys" ]] && chmod 600 "$HOME/.ssh/authorized_keys"
+    [[ -f "$HOME/.ssh/known_hosts" ]]     && chmod 644 "$HOME/.ssh/known_hosts"
     for f in "$HOME/.ssh/"*; do
         [[ -f "$f" ]] || continue
         case "$f" in
-            *.pub)            chmod 644 "$f" ;;
-            *.conf|*config)   chmod 600 "$f" ;;
-            *)                chmod 600 "$f" ;;
+            *.pub) chmod 644 "$f" ;;
+            *)     chmod 600 "$f" ;;
         esac
     done
 fi
@@ -51,8 +82,8 @@ fi
 # ~/.gnupg — GPG refuses to use keys if perms are too open
 if [[ -d "$HOME/.gnupg" ]]; then
     chmod 700 "$HOME/.gnupg"
-    find "$HOME/.gnupg" -type f -exec chmod 600 {} \;
-    find "$HOME/.gnupg" -type d -exec chmod 700 {} \;
+    find "$HOME/.gnupg" -type f -exec chmod 600 {} +
+    find "$HOME/.gnupg" -type d -exec chmod 700 {} +
 fi
 
-echo "Done."
+echo "done." >&2
