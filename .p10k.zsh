@@ -1600,7 +1600,7 @@
   # Battery pictograms going from low to high level of charge.
   typeset -g POWERLEVEL9K_BATTERY_STAGES='\UF008E\UF007A\UF007B\UF007C\UF007D\UF007E\UF007F\UF0080\UF0081\UF0082\UF0079'
   # Don't show the remaining time to charge/discharge.
-  typeset -g POWERLEVEL9K_BATTERY_VERBOSE=false
+  typeset -g POWERLEVEL9K_BATTERY_VERBOSE=true
 
   #####################################[ wifi: wifi speed ]#####################################
   # WiFi color.
@@ -1693,7 +1693,7 @@
   #   - verbose: Enable instant prompt and print a warning when detecting console output during
   #              zsh initialization. Choose this if you've never tried instant prompt, haven't
   #              seen the warning, or if you are unsure what this all means.
-  typeset -g POWERLEVEL9K_INSTANT_PROMPT=verbose
+  typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
 
   # Hot reload allows you to change POWERLEVEL9K options after Powerlevel10k has been initialized.
   # For example, you can type POWERLEVEL9K_BACKGROUND=red and see your prompt turn red. Hot reload
