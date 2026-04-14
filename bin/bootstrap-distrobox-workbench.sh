@@ -25,7 +25,7 @@ PKGS_BASE=(
 
   # editor / terminal
   neovim tmux
-  zsh
+  zsh lsd
   pwgen
   fastfetch
   yt-dlp
