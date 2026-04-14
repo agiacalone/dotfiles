@@ -16,9 +16,12 @@ cd "$TMP_DIR"
 echo "→ Downloading JetBrains Mono..."
 # Official JetBrains Mono release zip
 JBM_URL="https://download.jetbrains.com/fonts/JetBrainsMono-2.304.zip"
+JBM_NF_URL="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip"
 
 curl -L -o jetbrains-mono.zip "$JBM_URL"
-unzip -q jetbrains-mono.zip
+curl -L -o jetbrains-mono-nf.zip "$JBM_NF_URL"
+unzip -q jetbrains-mono.zip -d jetbrains-mono
+unzip -q jetbrains-mono-nf.zip -d jetbrains-mono-nf
 
 echo "→ Installing JetBrains Mono fonts..."
 find . -maxdepth 3 -type f \( -name "*.ttf" -o -name "*.otf" \) -print0 | while IFS= read -r -d '' f; do
@@ -31,9 +34,12 @@ done
 echo "→ Downloading IBM Plex Mono..."
 # IBM Plex full zip from GitHub releases (mono is inside)
 IBM_PLEX_URL="https://github.com/IBM/plex/releases/download/v6.3.0/TrueType.zip"
+IBM_PLEX_NF_URL="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/IBMPlexMono.zip"
 
 curl -L -o ibm-plex.zip "$IBM_PLEX_URL"
+curl -L -o ibm-plex-nf.zip "$IBM_PLEX_URL"
 unzip -q ibm-plex.zip -d ibm-plex
+unzip -q ibm-plex-nf.zip -d ibm-plex-nf
 
 echo "→ Installing IBM Plex Mono fonts..."
 find ibm-plex -maxdepth 5 -type f -iname "IBMPlexMono-*.ttf" -print0 | while IFS= read -r -d '' f; do
@@ -45,14 +51,18 @@ done
 ########################################
 echo "→ Downloading Hack..."
 HACK_URL="https://github.com/source-foundry/Hack/releases/download/v3.003/Hack-v3.003-ttf.zip"
+HACK_NF_URL="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Hack.zip"
 
 curl -L -o hack.zip "$HACK_URL"
+curl -L -o hack-nf.zip "$HACK_NF_URL"
 unzip -q hack.zip -d hack
+unzip -1 hack-nf.zip -d hack-nf
 
 echo "→ Installing Hack fonts..."
 find hack -maxdepth 5 -type f -name "*.ttf" -print0 | while IFS= read -r -d '' f; do
     cp -v "$f" "$FONT_DIR/"
 done
+
 
 ########################################
 # Refresh font cache
