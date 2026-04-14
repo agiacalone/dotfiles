@@ -3,9 +3,10 @@
 # Note: mlbt uses docker here; ~/.aliases.local overrides with podman on Distrobox/Fedora.
 
 # --- ls ---
-alias sl='ls'
-alias ls='ls -h --color'
-alias lls='ls -lah --color'
+alias sl='lsd'
+alias ls='lsd -h'
+alias lls='lsd -lah'
+alias ls-old='/bin/ls -h --color'
 
 # --- Editors ---
 alias emacs='emacs -nw'
