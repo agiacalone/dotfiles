@@ -19,4 +19,20 @@ else
   echo "RPM Fusion already installed."
 fi
 
+# --- Cider (Apple Music client) ---
+sudo rpm --import https://repo.cider.sh/RPM-GPG-KEY
+if [[ ! -f /etc/yum.repos.d/cider.repo ]]; then
+  sudo tee /etc/yum.repos.d/cider.repo << 'EOF'
+[cidercollective]
+name=Cider Collective Repository
+baseurl=https://repo.cider.sh/rpm/RPMS
+enabled=1
+gpgcheck=1
+gpgkey=https://repo.cider.sh/RPM-GPG-KEY
+EOF
+else
+  echo "Cider repo already configured."
+fi
+sudo dnf install -y Cider
+
 echo "==> Done."
