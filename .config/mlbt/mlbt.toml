@@ -1,0 +1,8 @@
+# See https://github.com/mlb-rs/mlbt#config for options
+timezone = "America/Los_Angeles"
+favorite_team = "San Francisco Giants"
+nerd_fonts = true      # glyphs                                                                             
+team_colors = true     # team name coloring                                                                 
+theme = "rainbow"      # stat visualization tier
+#theme = "classic"
+#theme = "lean"

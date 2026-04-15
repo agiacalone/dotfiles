@@ -33,8 +33,10 @@ alias mlb-dlp='yt-dlp --username $MLB_USERNAME --password $MLB_PASSWORD'
 
 # --- Docker ---
 alias dcp='docker compose pull && docker compose up -d --remove-orphans && docker image prune -f'
-alias mlbt='docker run -it --rm --name mlbt ghcr.io/mlb-rs/mlbt'
-alias mlbt-podman='host-spawn podman run -it --rm --name mlbt ghcr.io/mlb-rs/mlbt'  
+#alias mlbt='docker run -it --rm --name mlbt ghcr.io/mlb-rs/mlbt'
+alias mlbtg='docker run -it --rm --name mlbtg ghcr.io/agiacalone/mlbtg'
+alias mlbtg-p='host-spawn podman run -it --rm --name mlbtg -e XDG_CONFIG_HOME=/config -v ~/.config/mlbt:/config/mlbt:Z ghcr.io/agiacalone/mlbtg'
+alias mlbt='mlbtg'
 
 # --- Claude Code ---
 alias claude-pro='claude'         # uses OAuth/keychain (claude.ai Pro)
