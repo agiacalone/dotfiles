@@ -1,0 +1,21 @@
+{
+  "_comment": "Reference snapshot of Claude Code MCP servers configured for project /home/anthony. Secrets are NOT stored here — each server reads credentials from shell environment variables (see ~/.zshrc.local). To re-apply on a new machine, either merge this block into ~/.claude.json under projects['/home/anthony'].mcpServers, or recreate with: claude mcp add <name> <command> [args...].",
+  "mcpServers": {
+    "fastmail": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["@jordonh19/fastmail-mcp-server"],
+      "env": {}
+    },
+    "calendar": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "caldav-mcp"],
+      "env": {}
+    }
+  },
+  "_env_required": {
+    "fastmail": ["FASTMAIL_API_TOKEN"],
+    "calendar": ["CALDAV_BASE_URL", "CALDAV_USERNAME", "CALDAV_PASSWORD"]
+  }
+}
