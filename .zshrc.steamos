@@ -1,0 +1,35 @@
+# SteamOS (Steam Deck) zsh configuration
+#
+# SteamOS is Arch-based with a read-only /usr. Keep everything user-local:
+# prefer Homebrew-on-Linux, Nix, or Flatpak over pacman so config survives
+# OS updates. Nothing here writes outside $HOME.
+
+# Load Nord theme for ls colors
+test -r ~/.dir_colors && eval "$(dircolors ~/.dir_colors)"
+
+# Use terminal for GPG (updatestartuptty refreshes gpg-agent's TTY for tmux)
+export GPG_TTY="$(tty)"
+gpg-connect-agent updatestartuptty /bye >/dev/null 2>&1
+
+# Homebrew-on-Linux (survives SteamOS updates; /usr is read-only)
+if [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
+
+# Nix single-user profile, if installed
+[[ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]] && source "$HOME/.nix-profile/etc/profile.d/nix.sh"
+
+# Flatpak binaries (Flatpak is first-class on SteamOS)
+export PATH="/var/lib/flatpak/exports/bin:$HOME/.local/share/flatpak/exports/bin:$PATH"
+
+# SteamOS-specific aliases
+alias flatup='flatpak update -y && flatpak uninstall --unused -y'
+alias readonly-off='sudo steamos-readonly disable'   # survives only until next OS update
+alias readonly-on='sudo steamos-readonly enable'
+alias gamemode='qdbus org.kde.Shutdown /Shutdown org.kde.Shutdown.logout'  # back to Gaming Mode
+
+# Warn if running on the SteamOS read-only root and someone tries pacman
+pacman() {
+  echo "SteamOS: /usr is read-only. Use brew/nix/flatpak, or run 'readonly-off' first (not recommended)." >&2
+  return 1
+}
