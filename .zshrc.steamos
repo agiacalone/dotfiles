@@ -33,3 +33,5 @@ pacman() {
   echo "SteamOS: /usr is read-only. Use brew/nix/flatpak, or run 'readonly-off' first (not recommended)." >&2
   return 1
 }
+
+alias sysupdate='sudo dnf upgrade -y --refresh --exclude=filesystem\* --exclude=setup\*'
