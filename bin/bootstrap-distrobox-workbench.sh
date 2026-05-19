@@ -147,6 +147,13 @@ done
 if [[ "$DEFAULT_SHELL_ZSH" == "1" ]]; then
   echo "[*] Setting default shell to zsh inside container..."
   inbox_user "command -v zsh >/dev/null && (chsh -s \"\$(command -v zsh)\" \"\$(whoami)\" || true)"
+
+  echo "[*] Installing oh-my-zsh extras (powerlevel10k + plugins)..."
+  # The deployed .zshrc expects the powerlevel10k theme and the
+  # zsh-autosuggestions / zsh-syntax-highlighting plugins. omz-extras-install
+  # clones them into ~/.oh-my-zsh/custom (shared home); it is idempotent.
+  # Base oh-my-zsh itself is assumed present in ~ (deployed via dotfiles).
+  inbox_user "bash ~/bin/omz-extras-install"
 fi
 
 # === Nerd Fonts ===
