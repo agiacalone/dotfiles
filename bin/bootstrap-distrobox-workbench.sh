@@ -39,6 +39,7 @@ PKGS_BASE=(
   # data / net / archives
   jq yq
   wget curl
+  pv
   rtorrent
   unzip unrar
   bind-utils
@@ -87,7 +88,12 @@ inbox_user() { distrobox enter "$NAME" -- bash -lc "$*"; }
 # Idempotently append a line to a file inside the container (as user)
 append_once() {
   local pattern="$1" line="$2" file="$3"
-  inbox_user "touch ${file} && grep -qF '${pattern}' ${file} || echo '${line}' >> ${file}"
+  # base64 the line so single-quotes and other specials in it survive the
+  # host -> distrobox -> bash -lc quoting layers intact (a literal echo '...'
+  # breaks when the line itself contains a single quote, e.g. an alias value).
+  local b64
+  b64=$(printf '%s\n' "$line" | base64 -w0)
+  inbox_user "touch ${file} && grep -qF '${pattern}' ${file} || base64 -d <<< '${b64}' >> ${file}"
 }
 
 # === Container setup ===
@@ -125,10 +131,12 @@ inbox_root "dnf -y install ${PKGS[*]}"
 # === Shell environment ===
 echo "[*] Configuring shell environment..."
 
-# sysupdate alias
+# sysupdate alias -> .aliases.local (untracked, per-machine). NOT .aliases:
+# .aliases is a tracked dotfile, identical across every install; appending here
+# would dirty it and fight dotfiles-update on every bootstrap run.
 append_once 'alias sysupdate=' \
   "alias sysupdate='sudo dnf upgrade -y --refresh --exclude=filesystem\* --exclude=setup\*'" \
-  ~/.aliases
+  ~/.aliases.local
 
 for rcfile in ~/.zshrc ~/.bashrc; do
   append_once '[[ -f ~/.aliases ]]'  '[[ -f ~/.aliases ]] && source ~/.aliases' "$rcfile"
@@ -158,7 +166,9 @@ inbox_user "
 
 # === npm tools ===
 echo "[*] Installing npm-based tools (markdownlint-cli)..."
-inbox_user "npm install -g markdownlint-cli"
+# Run as root: npm's global prefix is /usr/local (root-owned) — a user-level
+# `npm install -g` fails EACCES on /usr/local/lib/node_modules.
+inbox_root "npm install -g markdownlint-cli"
 
 # === vale (prose linter, GitHub releases) ===
 echo "[*] Installing vale..."

@@ -92,5 +92,5 @@ export PATH=$PATH:$GOBIN
 NNTPSERVER='news.eternal-september.org' && export NNTPSERVER
 
 #source $HOME/.aliases
-source $HOME/.aliases.local
+[ -f "$HOME/.aliases.local" ] && source "$HOME/.aliases.local"
 

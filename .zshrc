@@ -146,3 +146,16 @@ fi
 if command -v atuin >/dev/null 2>&1; then
   eval "$(atuin init zsh)"
 fi
+
+# Time-of-day prompt char (nerd font weather glyphs)
+_p10k_tod_char() {
+  local h=${(%):-%D{%H}}
+  case $h in
+    0[5-9]|10) TOD_CHAR=$'' ;;  # sunrise
+    1[1-6])    TOD_CHAR=$'' ;;  # sun
+    1[7-9]|20) TOD_CHAR=$'' ;;  # sunset
+    *)         TOD_CHAR=$'' ;;  # moon
+  esac
+}
+autoload -Uz add-zsh-hook
+add-zsh-hook precmd _p10k_tod_char
