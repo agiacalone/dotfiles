@@ -13,7 +13,7 @@ done
 
 # === Config ===
 NAME="${NAME:-workbench}"
-IMAGE="${IMAGE:-registry.fedoraproject.org/fedora:43}"  # stable (avoid Rawhide for workbench containers)
+IMAGE="${IMAGE:-registry.fedoraproject.org/fedora:44}"  # stable (avoid Rawhide for workbench containers)
 DEFAULT_SHELL_ZSH="${DEFAULT_SHELL_ZSH:-1}"
 
 # --- Packages (always installed) ---
@@ -203,7 +203,7 @@ Then run:
   sysupdate
 
 Notes:
-- Uses Fedora 43 stable (good for a long-lived daily driver container).
+- Uses Fedora 44 stable (good for a long-lived daily driver container).
 - Permanently excludes filesystem/setup upgrades inside the container to avoid RPM chown failures on bind mounts.
 - Override package list with: EXTRA_PKGS="pkg1 pkg2" $0
 
