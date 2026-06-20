@@ -42,6 +42,10 @@ set -g pane-active-border-style "fg=$acc"
 set -g pane-border-style "fg=${PAL[color8]}"
 set -g message-style "bg=$acc,fg=${PAL[bg]}"
 set -g mode-style "bg=$acc,fg=${PAL[bg]}"
+# Paint pane backgrounds as cells (not via emulator OSC) so the theme survives
+# mosh + ShadowTerm/SwiftTerm, which sync screen cells but drop palette OSC.
+set -g window-style "fg=${PAL[fg]},bg=${PAL[bg]}"
+set -g window-active-style "fg=${PAL[fg]},bg=${PAL[bg]}"
 EOF
 }
 

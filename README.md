@@ -38,6 +38,7 @@ theme --install-profiles   # generate native Konsole / iTerm2 profiles
 - **How:** palette files in `themes/*.theme` are the single source of truth. Switching emits **OSC 4/10/11/12** to repaint the live terminal (Konsole + iTerm2, tmux-passthrough aware), regenerates the tmux status conf, and writes `~/.config/theme/current` — which neovim `fs_event`-watches to flip its colorscheme (mono themes get a generated highlight set). New windows repaint on shell startup.
 - **Font:** profiles use `JetBrainsMono Nerd Font Mono` (see `themes/theme.conf`; installed by `bin/install-fonts.sh`).
 - **Root = red:** root shells auto-switch to `phosphor-red` (toggle with `THEME_ROOT_RED=0`).
+- **ShadowTerm / iOS + mosh:** ShadowTerm uses SwiftTerm, which honors OSC palette/bg sequences over **SSH** — live repaint works. Over **mosh**, palette OSC is dropped (mosh syncs screen *cells*, not terminal state), so the generated tmux confs also paint the pane background via `window-style` cells — the theme still renders correctly under mosh. truecolor needs mosh ≥ 1.4 (installed).
 - Add a theme: drop one `themes/<name>.theme` file. Tests: `bash themes/tests/run_all.sh`.
 
 ### Aliases (`~/.aliases`)
