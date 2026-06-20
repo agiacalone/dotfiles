@@ -11,7 +11,7 @@ case "$(uname -s)" in
     [ -r "$H/.local/share/konsole/Theme nord.profile" ] || { echo "no konsole profile"; exit 1; }
     grep -q 'JetBrainsMono' "$H/.local/share/konsole/Theme nord.profile" || { echo "profile font missing"; exit 1; } ;;
   Darwin)
-    j="$H/Library/Application Support/iTerm2/DynamicProfiles/readest-themes.json"
+    j="$H/Library/Application Support/iTerm2/DynamicProfiles/terminal-themes.json"
     [ -r "$j" ] && jq -e '.Profiles|length>=12' "$j" >/dev/null || { echo "bad dynamic profile"; exit 1; } ;;
 esac
 [ -r "$TR/generated/nord.itermcolors" ] || { echo "no generated itermcolors"; exit 1; }

@@ -93,9 +93,10 @@ install_profiles() {
       _say "installed Konsole schemes+profiles → $kd" ;;
     Darwin)
       local dp="$HOME/Library/Application Support/iTerm2/DynamicProfiles"; mkdir -p "$dp"
+      rm -f "$dp/readest-themes.json"   # retire the old mis-named bundle
       # shellcheck disable=SC2046
-      "$THEME_GEN" iterm $(palette_list | tr '\n' ' ') > "$dp/readest-themes.json"
-      _say "installed iTerm2 dynamic profiles → $dp/readest-themes.json" ;;
+      "$THEME_GEN" iterm $(palette_list | tr '\n' ' ') > "$dp/terminal-themes.json"
+      _say "installed iTerm2 dynamic profiles → $dp/terminal-themes.json" ;;
   esac
   # committed copies for sharing / manual import
   mkdir -p "$THEME_ROOT/generated"

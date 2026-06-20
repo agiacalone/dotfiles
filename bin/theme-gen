@@ -82,7 +82,7 @@ gen_iterm() {
     for n in "${names[@]}"; do
       _load "$n"
       [ $first -eq 1 ] || printf ','; first=0
-      printf '{"Name":"Theme %s","Guid":"readest-%s",' "$n" "$n"
+      printf '{"Name":"Theme %s","Guid":"theme-%s",' "$n" "$n"
       printf '"Normal Font":"%s %s","Use Non-ASCII Font":false,' "$THEME_FONT" "$THEME_FONT_SIZE"
       for i in $(seq 0 15); do printf '"Ansi %s Color":%s,' "$i" "$(_itcolor "${PAL[color$i]}")"; done
       printf '"Background Color":%s,' "$(_itcolor "${PAL[bg]}")"
