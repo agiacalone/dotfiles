@@ -14,6 +14,8 @@ echo "$j" | jq -e '.Profiles[0]["Ansi 15 Color"]["Red Component"]' >/dev/null ||
 echo "$j" | jq -e '.Profiles[0]["Normal Font"]|test("JetBrainsMono")' >/dev/null || { echo "font not set"; exit 1; }
 # tmux conf
 "$G" tmux tokyonight | grep -q 'status-style "bg=#1a1b26' || { echo "tmux bg wrong"; exit 1; }
+# window-style: pane bg painted as cells (mosh/ShadowTerm survival)
+"$G" tmux tokyonight | grep -q 'window-active-style "fg=#c0caf5,bg=#1a1b26"' || { echo "no window-active-style"; exit 1; }
 # itermcolors plist parses (plutil if available, else xmllint, else skip)
 p="$("$G" itermcolors nord)"
 echo "$p" | grep -q '<key>Ansi 0 Color</key>' || { echo "itermcolors missing ansi"; exit 1; }
