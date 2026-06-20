@@ -34,6 +34,7 @@ export LC_CTYPE=en_US.UTF-8
 
 path=("$HOME/.local/bin" "$HOME/bin" /usr/local/sbin $path)
 export PATH="$HOME/.npm-global/bin:$HOME/.cargo/bin:$PATH"
+export COLORTERM=truecolor
 
 # --- History and shell behavior ---
 export HISTFILE="$HOME/.zsh_history"
