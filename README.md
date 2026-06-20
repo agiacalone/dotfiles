@@ -23,6 +23,23 @@ Personal dotfiles for macOS and Linux (Fedora/Kinoite, Ubuntu/Debian). Deployed 
 - Shared `.vimrc` works in both `vim` and `nvim` (Neovim also has its own `init.lua` in `.config/nvim/`)
 - 80-column marker, smart indent, fold-by-indent, persistent cursor line
 
+### Theme switcher (`theme`)
+One command repaints **the emulator, tmux, neovim, and zsh** in lockstep — truecolor, live, no restart.
+
+```sh
+theme              # fzf picker (numbered-menu fallback)
+theme nord         # switch everything, live
+theme list         # available + current (*)
+theme next | prev  # cycle
+theme --install-profiles   # generate native Konsole / iTerm2 profiles
+```
+
+- **12 themes:** nord, gruvbox-dark/-light, tokyonight, solarized-dark/-light, catppuccin-mocha, everforest, and four warm **phosphor** monochromes — `phosphor-green` (IBM 5151/P39), `phosphor-green-apple` (Apple ][/P31), `phosphor-amber`, `phosphor-red` (soft, for root).
+- **How:** palette files in `themes/*.theme` are the single source of truth. Switching emits **OSC 4/10/11/12** to repaint the live terminal (Konsole + iTerm2, tmux-passthrough aware), regenerates the tmux status conf, and writes `~/.config/theme/current` — which neovim `fs_event`-watches to flip its colorscheme (mono themes get a generated highlight set). New windows repaint on shell startup.
+- **Font:** profiles use `JetBrainsMono Nerd Font Mono` (see `themes/theme.conf`; installed by `bin/install-fonts.sh`).
+- **Root = red:** root shells auto-switch to `phosphor-red` (toggle with `THEME_ROOT_RED=0`).
+- Add a theme: drop one `themes/<name>.theme` file. Tests: `bash themes/tests/run_all.sh`.
+
 ### Aliases (`~/.aliases`)
 | Alias | What it does |
 |-------|-------------|
