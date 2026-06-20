@@ -159,3 +159,34 @@ _p10k_tod_char() {
 }
 autoload -Uz add-zsh-hook
 add-zsh-hook precmd _p10k_tod_char
+
+# --- Coordinated terminal theme switcher -------------------------------------
+# `theme` (function) wraps ~/bin/theme so switching also refreshes THIS shell's
+# LS_COLORS. New windows repaint to the current theme on startup; root shells
+# flip to phosphor-red unless THEME_ROOT_RED=0.
+_theme_dircolors() {  # $1 = dark|light ; only acts if a per-bg dircolors file exists
+  local bg="$1" f
+  command -v dircolors >/dev/null 2>&1 || return
+  for f in "$HOME/.dir_colors.$bg" "$HOME/.dir_colors-$bg"; do
+    [[ -r $f ]] && { eval "$(dircolors -b "$f")"; return; }
+  done
+}
+theme() {
+  command theme "$@" || return
+  local cur bg root="${THEME_ROOT:-$HOME/themes}"
+  cur="$(cat ~/.config/theme/current 2>/dev/null)"
+  [[ -n $cur ]] || return
+  bg="$(sed -n 's/^background=//p' "$root/$cur.theme" 2>/dev/null)"
+  [[ -n $bg ]] && _theme_dircolors "$bg"
+}
+
+if [[ -o interactive ]] && (( $+commands[theme] )); then
+  if [[ $EUID -eq 0 && ${THEME_ROOT_RED:-1} -ne 0 ]]; then
+    command theme --reapply phosphor-red 2>/dev/null
+  else
+    command theme --reapply 2>/dev/null
+    cur="$(cat ~/.config/theme/current 2>/dev/null)"
+    [[ -n $cur ]] && _theme_dircolors "$(sed -n 's/^background=//p' "${THEME_ROOT:-$HOME/themes}/$cur.theme" 2>/dev/null)"
+    unset cur
+  fi
+fi
