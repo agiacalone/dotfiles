@@ -27,6 +27,7 @@ local MAP = {
   ["solarized-light"]  = { scheme = "solarized",        bg = "light" },
   ["catppuccin-mocha"] = { scheme = "catppuccin-mocha", bg = "dark"  },
   ["everforest"]       = { scheme = "everforest",       bg = "dark"  },
+  ["tomorrow-night-eighties"] = { scheme = "base16-tomorrow-night-eighties", bg = "dark" },
 }
 
 local function read_state()

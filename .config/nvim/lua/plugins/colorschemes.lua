@@ -5,4 +5,5 @@ return {
   { "sainnhe/everforest",        lazy = false, priority = 1000 },
   { "catppuccin/nvim",           name = "catppuccin", lazy = false, priority = 1000 },
   { "maxmx03/solarized.nvim",    lazy = false, priority = 1000, opts = {} },
+  { "RRethy/nvim-base16",        lazy = false, priority = 1000 },  -- base16-tomorrow-night-eighties, etc.
 }
