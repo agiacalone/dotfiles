@@ -76,7 +76,9 @@ EOF
 
 gen_iterm() {
   local names=("$@") n i first=1
-  { printf '{"Profiles":['
+  # Emit JSON directly (no jq dependency — macOS often lacks jq, which produced
+  # an empty/invalid DynamicProfiles file). printf assembly is valid JSON.
+  printf '{"Profiles":['
     for n in "${names[@]}"; do
       _load "$n"
       [ $first -eq 1 ] || printf ','; first=0
@@ -88,8 +90,7 @@ gen_iterm() {
       printf '"Cursor Color":%s,' "$(_itcolor "${PAL[cursor]}")"
       printf '"Selection Color":%s}' "$(_itcolor "${PAL[selection]}")"
     done
-    printf ']}'
-  } | jq .
+    printf ']}\n'
 }
 
 gen_itermcolors() {
