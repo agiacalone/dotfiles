@@ -18,3 +18,13 @@ osc_string() {
   _osc_emit "]11;${PAL[bg]}"
   _osc_emit "]12;${PAL[cursor]}"
 }
+
+# osc_reset -> tell the emulator to drop all forced palette overrides and revert
+# to its own profile/native colors. OSC 104 (no params) resets the whole ANSI
+# palette; 110/111/112 reset default fg/bg/cursor. Needs no PAL.
+osc_reset() {
+  _osc_emit "]104"   # reset ANSI colors 0-15
+  _osc_emit "]110"   # reset default foreground
+  _osc_emit "]111"   # reset default background
+  _osc_emit "]112"   # reset cursor color
+}

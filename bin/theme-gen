@@ -11,6 +11,10 @@ BIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
 THEME_ROOT="${THEME_ROOT:-$(cd "$BIN_DIR/../themes" 2>/dev/null && pwd)}"
 . "$THEME_ROOT/lib/palette.sh"
 THEME_FONT="JetBrainsMono Nerd Font Mono"; THEME_FONT_SIZE=13
+# iTerm2 Dynamic Profiles inherit every unspecified key (fonts, Nerd Font, etc.)
+# from this parent profile, so theme profiles differ from your default ONLY in
+# colors. Set to your default profile's NAME (override in theme.conf if renamed).
+THEME_ITERM_PARENT="${THEME_ITERM_PARENT:-Personal}"
 [ -r "$THEME_ROOT/theme.conf" ] && . "$THEME_ROOT/theme.conf"
 
 hex2rgb() { local h="${1#\#}"; printf '%d %d %d' "0x${h:0:2}" "0x${h:2:2}" "0x${h:4:2}"; }
@@ -80,12 +84,15 @@ gen_iterm() {
   local names=("$@") n i first=1
   # Emit JSON directly (no jq dependency — macOS often lacks jq, which produced
   # an empty/invalid DynamicProfiles file). printf assembly is valid JSON.
+  # Each profile only specifies colors and names "Dynamic Profile Parent Name":
+  # iTerm2 inherits every other key (fonts, Nerd Font, padding, …) from that
+  # parent, so all theme profiles stay uniform with the default — colors aside.
   printf '{"Profiles":['
     for n in "${names[@]}"; do
       _load "$n"
       [ $first -eq 1 ] || printf ','; first=0
       printf '{"Name":"Theme %s","Guid":"theme-%s",' "$n" "$n"
-      printf '"Normal Font":"%s %s","Use Non-ASCII Font":false,' "$THEME_FONT" "$THEME_FONT_SIZE"
+      printf '"Dynamic Profile Parent Name":"%s",' "$THEME_ITERM_PARENT"
       for i in $(seq 0 15); do printf '"Ansi %s Color":%s,' "$i" "$(_itcolor "${PAL[color$i]}")"; done
       printf '"Background Color":%s,' "$(_itcolor "${PAL[bg]}")"
       printf '"Foreground Color":%s,' "$(_itcolor "${PAL[fg]}")"

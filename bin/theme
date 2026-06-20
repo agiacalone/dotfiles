@@ -5,6 +5,7 @@
 #   theme <name>          switch to <name> (live)
 #   theme list [--names]  list available themes (current marked)
 #   theme next | prev     cycle
+#   theme clear | 0       remove all forced overrides; revert to native colors
 #   theme --reapply [name]  emit OSC for current (or given) theme only; no state write
 #   theme --install-profiles  generate+install native Konsole/iTerm2 profiles
 # Flags: --no-emulator (skip OSC), --quiet
@@ -53,6 +54,28 @@ reapply() {  # $1=name (optional) — OSC only, no state write (zsh startup / ro
   _apply_emulator "$n"
 }
 
+clear_theme() {  # remove ALL forced overrides: emulator palette, tmux, persisted state
+  # 1. Emulator: revert to its own profile/native colors (unless --no-emulator).
+  [ -n "${NO_EMULATOR:-}" ] || osc_reset
+  # 2. tmux: unset every option the generated theme conf forces on the running
+  #    server, so it falls back to the user's base config / built-in defaults.
+  if command -v tmux >/dev/null 2>&1 && tmux info >/dev/null 2>&1; then
+    local o
+    for o in status-style status-left-style status-right-style \
+             window-status-current-style window-status-style \
+             pane-active-border-style pane-border-style \
+             message-style mode-style window-style window-active-style; do
+      tmux set -gu "$o" 2>/dev/null
+    done
+  fi
+  # 3. Persist a non-theme sentinel so new shells (zsh `--reapply`) don't re-force
+  #    a theme: 'none' is not a palette, so reapply()/_exists() no-op on it, and
+  #    nvim's fs-watch finds no matching scheme and leaves the editor as-is.
+  mkdir -p "$(dirname "$THEME_STATE")"
+  printf 'none\n' > "$THEME_STATE"   # nvim fs-watches this
+  _say "theme: cleared — overrides removed; new shells keep the terminal's native colors"
+}
+
 list() {
   local cur n; cur="$(_current)"
   if [ "${1:-}" = "--names" ]; then palette_list; return; fi
@@ -94,9 +117,20 @@ install_profiles() {
     Darwin)
       local dp="$HOME/Library/Application Support/iTerm2/DynamicProfiles"; mkdir -p "$dp"
       rm -f "$dp/readest-themes.json"   # retire the old mis-named bundle
+      # Write atomically. iTerm2 watches this directory and rejects ("invalid
+      # JSON … not in the correct format") any file it reads mid-write — and a
+      # plain '> file' redirect truncates then streams, so the watcher can catch
+      # it empty/partial. Build in a temp on the same filesystem but OUTSIDE the
+      # watched dir (no .json suffix so iTerm never parses it), then rename into
+      # place: rename(2) is atomic, so iTerm only ever sees the complete file.
+      local tmp; tmp="$(mktemp "${dp%/*}/terminal-themes.XXXXXX")"
       # shellcheck disable=SC2046
-      "$THEME_GEN" iterm $(palette_list | tr '\n' ' ') > "$dp/terminal-themes.json"
-      _say "installed iTerm2 dynamic profiles → $dp/terminal-themes.json" ;;
+      if "$THEME_GEN" iterm $(palette_list | tr '\n' ' ') > "$tmp"; then
+        mv -f "$tmp" "$dp/terminal-themes.json"
+        _say "installed iTerm2 dynamic profiles → $dp/terminal-themes.json"
+      else
+        rm -f "$tmp"; echo "theme: failed to generate iTerm2 profiles" >&2; exit 1
+      fi ;;
   esac
   # committed copies for sharing / manual import
   mkdir -p "$THEME_ROOT/generated"
@@ -113,6 +147,7 @@ while [ $# -gt 0 ]; do
     --install-profiles) install_profiles; exit $? ;;
     list) shift; list "${1:-}"; exit $? ;;
     next|prev) cycle "$1"; exit $? ;;
+    clear|0) clear_theme; exit $? ;;
     -*) echo "theme: unknown flag $1" >&2; exit 2 ;;
     *) pos+=("$1") ;;
   esac

@@ -25,7 +25,10 @@ local MAP = {
   ["tokyonight"]       = { scheme = "tokyonight-night", bg = "dark"  },
   ["solarized-dark"]   = { scheme = "solarized",        bg = "dark"  },
   ["solarized-light"]  = { scheme = "solarized",        bg = "light" },
-  ["catppuccin-mocha"] = { scheme = "catppuccin-mocha", bg = "dark"  },
+  ["catppuccin-mocha"]     = { scheme = "catppuccin-mocha",     bg = "dark"  },
+  ["catppuccin-macchiato"] = { scheme = "catppuccin-macchiato", bg = "dark"  },
+  ["catppuccin-frappe"]    = { scheme = "catppuccin-frappe",    bg = "dark"  },
+  ["catppuccin-latte"]     = { scheme = "catppuccin-latte",     bg = "light" },
   ["everforest"]       = { scheme = "everforest",       bg = "dark"  },
   ["tomorrow-night-eighties"] = { scheme = "base16-tomorrow-night-eighties", bg = "dark" },
 }
