@@ -62,6 +62,13 @@ for item in "$DOTFILES_DIR"/*; do
     cp "${cp_flags[@]}" "$item" "$HOME"/
 done
 
+# regenerate native terminal-theme profiles (Konsole / iTerm2) from the palettes.
+# best-effort: never fail the update if the theme tool or its deps are missing.
+if [[ -x "$HOME/bin/theme" ]]; then
+    echo "installing terminal theme profiles..." >&2
+    "$HOME/bin/theme" --quiet --install-profiles || true
+fi
+
 echo "fixing permissions..." >&2
 
 # ~/.ssh — SSH is strict: wrong perms cause silent auth failures
