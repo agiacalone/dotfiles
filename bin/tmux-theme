@@ -1,27 +1,9 @@
 #!/usr/bin/env bash
-# tmux-theme — toggle between gruvbox and tokyonight
-# Usage: tmux-theme [gruvbox|tokyonight]   (no arg = toggle)
-
-THEME_FILE="$HOME/.tmux/current-theme"
-THEMES_DIR="$HOME/.tmux/themes"
-CURRENT=$(cat "$THEME_FILE" 2>/dev/null || echo "gruvbox")
-
-if [ -n "$1" ]; then
-    NEW="$1"
-else
-    if [ "$CURRENT" = "gruvbox" ]; then
-        NEW="tokyonight"
-    else
-        NEW="gruvbox"
-    fi
-fi
-
-CONF="$THEMES_DIR/$NEW.conf"
-if [ ! -f "$CONF" ]; then
-    echo "Unknown theme: $NEW (no $CONF)" >&2
-    exit 1
-fi
-
-echo "$NEW" > "$THEME_FILE"
-tmux source-file "$CONF"
-tmux display-message "Theme: $NEW"
+# Back-compat shim — `tmux-theme` is superseded by `theme` (which also drives the
+# emulator, nvim, and zsh). Forwards all arguments. Old names map to new ones:
+#   tmux-theme gruvbox    -> theme gruvbox-dark
+#   tmux-theme tokyonight -> theme tokyonight
+case "${1:-}" in
+  gruvbox) set -- gruvbox-dark ;;
+esac
+exec theme "$@"
