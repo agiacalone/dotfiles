@@ -34,3 +34,9 @@ require("lazy").setup({
   },
   checker = { enabled = true, notify = false },
 })
+
+-- Coordinated terminal theme sync: match the colorscheme to the terminal theme
+-- switcher (~/.config/theme/current) and live-update when `theme` changes it.
+vim.api.nvim_create_autocmd("VimEnter", {
+  callback = function() require("theme-sync").setup() end,
+})

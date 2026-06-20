@@ -47,6 +47,10 @@ Common aliases live in `.aliases`, sourced from the shell configs.
 
 Prefix key is `Ctrl-A` (not the default `Ctrl-B`); `Ctrl-B` is set as a secondary prefix for ShadowTerm iOS app compatibility. Session persistence via tmux-resurrect and tmux-continuum.
 
+## Theme switcher
+
+`bin/theme` switches the color scheme across emulator (Konsole/iTerm2 via OSC), tmux, neovim, and zsh in lockstep. Source of truth = `themes/*.theme` palette files (16 ANSI + fg/bg/cursor + per-program mapping keys). `bin/theme-gen` turns a palette into tmux/Konsole/iTerm2 artifacts. State in `~/.config/theme/current` (neovim `fs_event`-watches it; `.config/nvim/lua/theme-sync.lua` applies the matching colorscheme, generating a monochrome highlight set for the `phosphor-*` themes). `bin/tmux-theme` is a back-compat shim → `theme`. Spec + plan in `docs/superpowers/`. Tests: `bash themes/tests/run_all.sh`. Adding a theme = drop one `themes/<name>.theme`.
+
 ## .gitignore
 
 `.claude`, `.passwords`, and `.DS_Store` are intentionally excluded from the repository.
