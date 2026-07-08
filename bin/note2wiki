@@ -1,0 +1,911 @@
+#!/usr/bin/env bash
+#
+# note2wiki — ONE-WAY publish pipeline: Obsidian vault -> Wiki.js (GraphQL API).
+#
+# Scans the vault for notes whose YAML frontmatter has `wiki: true`, transforms
+# them into Wiki.js-flavored markdown, sanitizes secrets (HARD refusal on any
+# residual credential), then UPSERTS them as pages under kb/ via the Wiki.js
+# GraphQL API. Publishing is the security-critical path: NOTHING is sent to the
+# wiki if ANY flagged note fails the secrets guard (two-phase: scan all, then
+# publish all). Ownership guard: only ever create/update/delete pages under kb/.
+#
+# Config: WIKIJS_URL and WIKIJS_TOKEN from the environment, falling back to
+# ~/.config/note2wiki/config (KEY=VALUE lines, mode 600). State (slug -> page
+# id) lives in ~/.config/note2wiki/manifest.json — no longer a git repo.
+#
+# Usage:
+#   note2wiki                 publish (upsert kb/ pages via API, update manifest)
+#   note2wiki --dry-run       list CREATE/UPDATE/DELETE targets, change nothing
+#   note2wiki --self-test-all self-contained OFFLINE test harness (primary gate)
+#   note2wiki --self-test F   transform a single file, print result / refusal
+#
+set -euo pipefail
+
+# Paths default to the production vault but may be overridden via env
+# (used by the self-test harness; does not change default behavior).
+VAULT="${NOTE2WIKI_VAULT:-/home/anthony/documents/obsidian/vault}"
+CONFIG="${NOTE2WIKI_CONFIG:-$HOME/.config/note2wiki/config}"
+MANIFEST="${NOTE2WIKI_MANIFEST:-$HOME/.config/note2wiki/manifest.json}"
+
+# ---------------------------------------------------------------------------
+# Embedded Python 3 transform. Single-quoted heredoc: no bash expansion inside.
+# ---------------------------------------------------------------------------
+read -r -d '' PYSRC <<'PYEOF' || true
+import sys, os, re, json, shutil, tempfile, subprocess
+import urllib.request, urllib.error
+
+IMG_EXT = {'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp'}
+
+
+# --------------------------- helpers ---------------------------------------
+def slugify(s):
+    return re.sub(r'\s+', '-', s.strip().lower())
+
+
+def derive_title(filename):
+    base = filename
+    if base.endswith('.md'):
+        base = base[:-3]
+    base = re.sub(r'[-_]+', ' ', base).strip()
+    return base.title() if base else 'Untitled'
+
+
+def parse_scalar(v):
+    v = v.strip()
+    if v.startswith('[') and v.endswith(']'):
+        inner = v[1:-1].strip()
+        if not inner:
+            return []
+        return [unquote(x.strip()) for x in inner.split(',') if x.strip()]
+    low = v.lower()
+    if low in ('true', 'yes'):
+        return True
+    if low in ('false', 'no'):
+        return False
+    return unquote(v)
+
+
+def unquote(s):
+    s = s.strip()
+    if len(s) >= 2 and s[0] == s[-1] and s[0] in ('"', "'"):
+        return s[1:-1]
+    return s
+
+
+def parse_yaml_simple(lines):
+    """Minimal frontmatter parser: scalars, inline lists [a, b], block lists."""
+    d = {}
+    key = None
+    for ln in lines:
+        if not ln.strip():
+            continue
+        m = re.match(r'^(\s*)-\s+(.*)$', ln)
+        if m and key is not None:
+            d.setdefault(key, [])
+            if isinstance(d[key], list):
+                d[key].append(unquote(m.group(2).strip()))
+            continue
+        m = re.match(r'^([A-Za-z0-9_\-]+):\s*(.*)$', ln)
+        if m:
+            key = m.group(1)
+            val = m.group(2).strip()
+            if val == '':
+                d[key] = []          # pending block list (or empty)
+            else:
+                d[key] = parse_scalar(val)
+                key = None
+    return d
+
+
+def parse_frontmatter(text):
+    if not text.startswith('---'):
+        return {}, text
+    lines = text.split('\n')
+    if lines[0].strip() != '---':
+        return {}, text
+    end = None
+    for i in range(1, len(lines)):
+        if lines[i].strip() == '---':
+            end = i
+            break
+    if end is None:
+        return {}, text
+    fm = parse_yaml_simple(lines[1:end])
+    body = '\n'.join(lines[end + 1:])
+    return fm, body
+
+
+def is_flagged(fm):
+    v = fm.get('wiki')
+    return v is True or (isinstance(v, str) and v.strip().lower() == 'true')
+
+
+# --------------------------- transforms ------------------------------------
+def strip_wiki_regions(text):
+    return re.sub(r'%%wiki-strip%%.*?%%wiki-strip-end%%', '', text, flags=re.S)
+
+
+def drop_dataview_fences(text):
+    out = []
+    lines = text.split('\n')
+    i = 0
+    while i < len(lines):
+        m = re.match(r'^\s*```+\s*([A-Za-z0-9_-]*)\s*$', lines[i])
+        if m and m.group(1).lower() in ('dataview', 'dataviewjs'):
+            i += 1
+            while i < len(lines) and not re.match(r'^\s*```+\s*$', lines[i]):
+                i += 1
+            i += 1  # skip closing fence
+            continue
+        out.append(lines[i])
+        i += 1
+    return '\n'.join(out)
+
+
+def replace_embeds(text, ctx):
+    """Rewrite ![[img]] -> markdown image under /kb/attachments/. Wiki.js asset
+    upload via API is out of scope, so we do NOT copy/upload anything — we only
+    record the referenced image so phase 2 can WARN (never silently drop)."""
+    def repl(m):
+        inner = m.group(1).split('|')[0].strip()
+        base = os.path.basename(inner)
+        ext = base.rsplit('.', 1)[-1].lower() if '.' in base else ''
+        if ext in IMG_EXT:
+            if not ctx.get('self_test'):
+                ctx.setdefault('attachments', []).append(base)
+            return '![](/kb/attachments/%s)' % base
+        return m.group(0)
+    return re.sub(r'!\[\[([^\]]+)\]\]', repl, text)
+
+
+def replace_wikilinks(text, published):
+    def repl(m):
+        inner = m.group(1)
+        parts = inner.split('|')
+        target = parts[0].strip()
+        alias = parts[1].strip() if len(parts) > 1 else target
+        slug = slugify(os.path.basename(target.split('#')[0]))
+        if slug in published:
+            return '[%s](/kb/%s)' % (alias, slug)
+        return alias
+    return re.sub(r'\[\[([^\]]+)\]\]', repl, text)
+
+
+def replace_inline_fields(text):
+    text = re.sub(r'\[([^\[\]\n]+?)::\s*([^\]\n]*)\]', r'\2', text)
+    text = re.sub(r'\(([^()\n]+?)::\s*([^)\n]*)\)', r'\2', text)
+    return text
+
+
+def replace_highlights(text):
+    return re.sub(r'==([^=\n]+)==', r'\1', text)
+
+
+def strip_html(text):
+    return re.sub(r'<[^>]+>', '', text)
+
+
+def transform(body, ctx):
+    body = strip_wiki_regions(body)          # secrets: strip marked regions FIRST
+    body = drop_dataview_fences(body)
+    body = replace_embeds(body, ctx)
+    body = replace_wikilinks(body, ctx['published'])
+    body = replace_inline_fields(body)
+    body = replace_highlights(body)
+    body = strip_html(body)
+    return body
+
+
+def compute_title(fm, filename):
+    title = fm.get('title')
+    if not title:
+        al = fm.get('aliases')
+        if isinstance(al, list) and al:
+            title = al[0]
+        elif isinstance(al, str) and al:
+            title = al
+    if not title:
+        title = derive_title(filename)
+    return title
+
+
+def compute_tags(fm):
+    tags = fm.get('tags')
+    if not tags:
+        return []
+    if isinstance(tags, str):
+        return [tags]
+    return list(tags)
+
+
+def build_output(fm, body, filename):
+    """Full published document (frontmatter header + body). This is the SCAN
+    SURFACE for the secrets guard — a superset of what the API receives, so a
+    secret in the title/tags is caught too."""
+    title = compute_title(fm, filename)
+    lines = ['---', 'title: %s' % title]
+    tags = compute_tags(fm)
+    if tags:
+        lines.append('tags:')
+        for t in tags:
+            lines.append('  - %s' % t)
+    lines.append('editor: markdown')
+    lines.append('---')
+    header = '\n'.join(lines)
+    return header + '\n<!-- source: vault -->\n' + body.lstrip('\n')
+
+
+# --------------------------- secrets guard ---------------------------------
+def find_table_password_header(text):
+    lines = text.split('\n')
+    for i, ln in enumerate(lines):
+        # a markdown table separator row: pipes/colons/dashes/spaces, >=1 dash
+        if i > 0 and '-' in ln and re.match(r'^\s*\|?[\s:|+-]*-[\s:|+-]*\|?\s*$', ln):
+            header = lines[i - 1]
+            if '|' in header:
+                for cell in header.split('|'):
+                    if re.search(r'password|passcode', cell, re.I):
+                        return cell.strip()
+    return None
+
+
+def find_high_entropy_token(text):
+    for tok in re.split(r'\s+', text):
+        t = tok.strip('.,;:!?()[]{}"\'`')
+        if len(t) < 16:
+            continue
+        if not re.fullmatch(r'[A-Za-z0-9+/=_-]+', t):
+            continue
+        # not a URL / path
+        if '://' in tok or t.startswith('/') or t.startswith('./') or t.startswith('../'):
+            continue
+        has_low = any(c.islower() for c in t)
+        has_up = any(c.isupper() for c in t)
+        has_dig = any(c.isdigit() for c in t)
+        base64ish = ('+' in t) or ('=' in t)
+        if (has_low and has_up and has_dig) or base64ish:
+            return t
+        # I-1: the mixed-case/base64 rule above is blind to all-lowercase
+        # tokens. Also flag (err toward refusing) a bare token that contains:
+        #   - a lowercase-hex run of >= 20 chars (e.g. a 40-char sha/token), OR
+        #   - a >= 16-char [a-z0-9] run mixing at least one digit and one letter.
+        if re.search(r'[0-9a-f]{20,}', t):
+            return t
+        m = re.search(r'[a-z0-9]{16,}', t)
+        if m and any(c.isdigit() for c in m.group(0)) \
+                and any(c.isalpha() for c in m.group(0)):
+            return t
+    return None
+
+
+def scan_secrets(text):
+    """Return a human-readable pattern description if a secret is found, else None."""
+    if 'client_secret' in text:
+        return 'literal "client_secret"'
+    for ln in text.split('\n'):
+        if re.search(r'(password|passcode)\s*[:=]', ln, re.I):
+            return 'password/passcode assignment (line: %r)' % ln.strip()[:60]
+    cell = find_table_password_header(text)
+    if cell is not None:
+        return 'markdown table password/passcode column header (%r)' % cell
+    tok = find_high_entropy_token(text)
+    if tok:
+        return 'bare high-entropy token (%r)' % (tok[:8] + '...')
+    return None
+
+
+def process_note(fm, body, filename, ctx):
+    out_body = transform(body, ctx)
+    output = build_output(fm, out_body, filename)
+    err = scan_secrets(output)
+    return output, err
+
+
+# --------------------------- ownership guard -------------------------------
+def guard_wiki_path(path):
+    """HARD ownership guard: only ever touch pages under kb/. This replaces the
+    old filesystem guard now that output goes to the Wiki.js API."""
+    if not (path == 'kb' or path.startswith('kb/')):
+        raise RuntimeError('ownership guard: refusing wiki path outside kb/: %r' % path)
+    if '..' in path.split('/'):
+        raise RuntimeError('ownership guard: refusing traversal in wiki path: %r' % path)
+
+
+# --------------------------- Wiki.js GraphQL API ---------------------------
+LIST_Q = 'query { pages { list(orderBy: PATH){ id path } } }'
+
+CREATE_M = ('mutation ($content:String!,$path:String!,$title:String!,'
+            '$tags:[String]!,$desc:String!){ pages { create(content:$content, '
+            'description:$desc, editor:"markdown", isPrivate:false, '
+            'isPublished:true, locale:"en", path:$path, publishEndDate:"", '
+            'publishStartDate:"", scriptCss:"", scriptJs:"", tags:$tags, '
+            'title:$title){ responseResult{ succeeded errorCode message } '
+            'page{ id path } } } }')
+
+UPDATE_M = ('mutation ($id:Int!,$content:String!,$path:String!,$title:String!,'
+            '$tags:[String]!,$desc:String!){ pages { update(id:$id, '
+            'content:$content, description:$desc, editor:"markdown", '
+            'isPrivate:false, isPublished:true, locale:"en", path:$path, '
+            'publishEndDate:"", publishStartDate:"", scriptCss:"", scriptJs:"", '
+            'tags:$tags, title:$title){ responseResult{ succeeded errorCode '
+            'message } } } }')
+
+DELETE_M = ('mutation ($id:Int!){ pages { delete(id:$id){ responseResult{ '
+            'succeeded errorCode message } } } }')
+
+
+def _gql(url, token, query, variables):
+    """POST a GraphQL request. Body built with json (never string interpolation)
+    so content with quotes/newlines is safe. Raises RuntimeError on any error."""
+    endpoint = url.rstrip('/') + '/graphql'
+    payload = json.dumps({'query': query, 'variables': variables}).encode('utf-8')
+    req = urllib.request.Request(endpoint, data=payload, method='POST')
+    req.add_header('Content-Type', 'application/json')
+    req.add_header('Authorization', 'Bearer ' + token)
+    try:
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            raw = resp.read().decode('utf-8')
+    except urllib.error.HTTPError as e:
+        body = e.read().decode('utf-8', 'replace')[:300]
+        raise RuntimeError('HTTP %s from Wiki.js: %s' % (e.code, body))
+    except urllib.error.URLError as e:
+        raise RuntimeError('cannot reach Wiki.js at %s: %s' % (endpoint, e.reason))
+    data = json.loads(raw)
+    if data.get('errors'):
+        raise RuntimeError('GraphQL error: %s' % json.dumps(data['errors'])[:300])
+    return data['data']
+
+
+def _check(rr, action, path):
+    if not (rr and rr.get('succeeded')):
+        msg = rr.get('message') if rr else 'no responseResult'
+        code = rr.get('errorCode') if rr else '?'
+        raise RuntimeError('%s %s failed: %s (code %s)' % (action, path, msg, code))
+
+
+def wiki_list(url, token):
+    d = _gql(url, token, LIST_Q, {})
+    return {pg['path']: pg['id'] for pg in d['pages']['list']}
+
+
+def _vars(item, extra=None):
+    v = {'content': item['content'], 'path': item['path'],
+         'title': item['title'], 'tags': item['tags'], 'desc': item['desc']}
+    if extra:
+        v.update(extra)
+    return v
+
+
+def wiki_create(url, token, item):
+    d = _gql(url, token, CREATE_M, _vars(item))
+    res = d['pages']['create']
+    _check(res['responseResult'], 'create', item['path'])
+    return res['page']['id']
+
+
+def wiki_update(url, token, pid, item):
+    d = _gql(url, token, UPDATE_M, _vars(item, {'id': int(pid)}))
+    _check(d['pages']['update']['responseResult'], 'update', item['path'])
+
+
+def wiki_delete(url, token, pid, path):
+    d = _gql(url, token, DELETE_M, {'id': int(pid)})
+    _check(d['pages']['delete']['responseResult'], 'delete', path)
+
+
+# --------------------------- scan vault ------------------------------------
+def scan_vault(vault):
+    """Return list of (slug, path, fm, body, filename) for wiki:true notes."""
+    found = []
+    for root, _dirs, files in os.walk(vault):
+        for fn in files:
+            if not fn.endswith('.md'):
+                continue
+            p = os.path.join(root, fn)
+            try:
+                with open(p, 'r', encoding='utf-8') as f:
+                    text = f.read()
+            except (OSError, UnicodeDecodeError):
+                continue
+            fm, body = parse_frontmatter(text)
+            if is_flagged(fm):
+                slug = slugify(fn[:-3])
+                found.append((slug, p, fm, body, fn))
+    return found
+
+
+# --------------------------- manifest --------------------------------------
+def load_manifest(path):
+    if os.path.exists(path):
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except (OSError, ValueError):
+            return {}
+    return {}
+
+
+def save_manifest(path, data):
+    d = os.path.dirname(path)
+    if d:
+        os.makedirs(d, exist_ok=True)
+    with open(path, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=2, sort_keys=True)
+        f.write('\n')
+
+
+def _manifest_path(meta, slug):
+    """Resolve the kb/ path for a manifest entry (dict {path,id} or legacy)."""
+    if isinstance(meta, dict) and meta.get('path'):
+        return meta['path']
+    return 'kb/' + slug
+
+
+def _manifest_id(meta):
+    if isinstance(meta, dict):
+        return meta.get('id')
+    return None
+
+
+# --------------------------- phase 1: transform + scan ---------------------
+def build_items(vault):
+    """Phase 1 (offline, security gate): transform + secrets-scan EVERY flagged
+    note. Returns (items, refusal, warnings). On ANY refusal, items is None and
+    NOTHING has been sent anywhere — the two-phase 'write nothing' contract."""
+    notes = scan_vault(vault)
+    published = {slug for slug, *_ in notes}
+    items = {}
+    warnings = []
+    for slug, p, fm, body, fn in notes:
+        ctx = {'published': published, 'vault': vault, 'kb': None,
+               'self_test': False, 'attachments': []}
+        out_body = transform(body, ctx)
+        output = build_output(fm, out_body, fn)      # full scan surface
+        err = scan_secrets(output)
+        if err:
+            return None, (p, err), warnings
+        path = 'kb/' + slug
+        guard_wiki_path(path)
+        items[slug] = {
+            'path': path,
+            'title': compute_title(fm, fn),
+            'tags': compute_tags(fm),
+            'desc': str(fm.get('description') or ''),
+            'content': out_body,
+            'source': p,
+        }
+        for img in ctx['attachments']:
+            warnings.append((p, img))
+    return items, None, warnings
+
+
+def _refuse(p, err):
+    sys.stderr.write(
+        '\n*** note2wiki REFUSED — SECRET DETECTED ***\n'
+        '    note   : %s\n'
+        '    pattern: %s\n'
+        '    Nothing was published. Wrap the region in '
+        '%%%%wiki-strip%%%% ... %%%%wiki-strip-end%%%% or remove it.\n\n'
+        % (p, err))
+    return 3
+
+
+# --------------------------- modes -----------------------------------------
+def dryrun(vault, manifest):
+    url = os.environ.get('WIKIJS_URL', '').strip()
+    token = os.environ.get('WIKIJS_TOKEN', '').strip()
+
+    items, refusal, warnings = build_items(vault)
+    if refusal:
+        return _refuse(*refusal)
+    for p, img in warnings:
+        sys.stderr.write('WARNING: %s embeds image %r — Wiki.js asset upload is '
+                         'out of scope; upload it manually.\n' % (p, img))
+
+    if not items:
+        print('note2wiki --dry-run: no wiki:true notes found')
+        return 0
+
+    prev = load_manifest(manifest)
+    pathmap = None
+    if url and token:
+        try:
+            pathmap = wiki_list(url, token)
+        except RuntimeError as e:
+            sys.stderr.write('WARN: could not query Wiki.js pages.list: %s\n' % e)
+            pathmap = None
+
+    print('note2wiki --dry-run: %d flagged note(s)%s' %
+          (len(items), '' if pathmap is not None else ' (no token: live status unknown)'))
+    for slug in sorted(items):
+        path = items[slug]['path']
+        rel = os.path.relpath(items[slug]['source'], vault)
+        if pathmap is None:
+            print('  CREATE/UPDATE %-24s (%s) — needs a token to know which' % (path, rel))
+        elif path in pathmap:
+            print('  UPDATE        %-24s (%s) (id %s)' % (path, rel, pathmap[path]))
+        else:
+            print('  CREATE        %-24s (%s)' % (path, rel))
+    for slug in sorted(prev):
+        if slug not in items:
+            path = _manifest_path(prev[slug], slug)
+            pid = _manifest_id(prev[slug])
+            if pathmap is not None and path in pathmap:
+                pid = pathmap[path]
+            print('  DELETE        %-24s (dropped from flagged set) (id %s)' % (path, pid))
+    return 0
+
+
+def publish(vault, manifest, dry_run=False):
+    if dry_run:
+        return dryrun(vault, manifest)
+
+    url = os.environ.get('WIKIJS_URL', '').strip()
+    token = os.environ.get('WIKIJS_TOKEN', '').strip()
+
+    # -- Phase 1: transform + secrets-scan EVERY note (offline). A refusal on
+    # ANY note aborts here, before a single API call — nothing is published.
+    items, refusal, warnings = build_items(vault)
+    if refusal:
+        return _refuse(*refusal)
+    for p, img in warnings:
+        sys.stderr.write('WARNING: %s embeds image %r — Wiki.js asset upload is '
+                         'out of scope; upload it manually.\n' % (p, img))
+
+    # -- Token required to publish (checked AFTER the security scan so a leaky
+    # note still refuses on the secret, not on a missing token).
+    if not url or not token:
+        sys.stderr.write('note2wiki: REFUSING to publish — no WIKIJS_URL/'
+                         'WIKIJS_TOKEN resolvable (env or ~/.config/note2wiki/'
+                         'config).\n')
+        return 4
+
+    # -- Phase 2: every note passed — now upsert via the API.
+    prev = load_manifest(manifest)
+    pathmap = wiki_list(url, token)
+
+    new_manifest = {}
+    for slug in sorted(items):
+        item = items[slug]
+        guard_wiki_path(item['path'])
+        existing = pathmap.get(item['path'])
+        if existing is not None:
+            wiki_update(url, token, existing, item)
+            print('UPDATED %s (id %s)' % (item['path'], existing))
+            new_manifest[slug] = {'path': item['path'], 'id': existing}
+        else:
+            pid = wiki_create(url, token, item)
+            print('CREATED %s (id %s)' % (item['path'], pid))
+            new_manifest[slug] = {'path': item['path'], 'id': pid}
+
+    # -- Deletions: pages in the manifest but no longer flagged.
+    for slug in sorted(prev):
+        if slug not in items:
+            path = _manifest_path(prev[slug], slug)
+            guard_wiki_path(path)
+            pid = _manifest_id(prev[slug])
+            if pid is None:
+                pid = pathmap.get(path)
+            if pid is not None:
+                wiki_delete(url, token, pid, path)
+                print('DELETED %s (id %s) — no longer flagged' % (path, pid))
+            else:
+                print('SKIP delete %s — not present on wiki' % path)
+
+    save_manifest(manifest, new_manifest)
+    print('manifest: %d page(s) -> %s' % (len(new_manifest), manifest))
+    return 0
+
+
+def selftest_single(path):
+    with open(path, 'r', encoding='utf-8') as f:
+        text = f.read()
+    fm, body = parse_frontmatter(text)
+    ctx = {'published': set(), 'vault': None, 'kb': None, 'self_test': True}
+    output, err = process_note(fm, body, os.path.basename(path), ctx)
+    if err:
+        print('REFUSED: %s' % err)
+        return 1
+    print(output)
+    return 0
+
+
+# --------------------------- self-test-all ---------------------------------
+def _assert(results, cond, desc):
+    results.append((bool(cond), desc))
+
+
+def selftest_all():
+    tmp = tempfile.mkdtemp(prefix='note2wiki-selftest.')
+    results = []
+
+    published = {'our-hosted-services', 'fixture', 'fixture-marked'}
+
+    def ctx_for():
+        return {'published': published, 'vault': None, 'kb': None, 'self_test': True}
+
+    # ---- Fixture 1: transform correctness ----
+    f1 = os.path.join(tmp, 'fixture.md')
+    with open(f1, 'w', encoding='utf-8') as f:
+        f.write(
+            '---\n'
+            'title: Fixture\n'
+            'wiki: true\n'
+            'tags: [x]\n'
+            '---\n'
+            '# Fixture\n'
+            'See [[our-hosted-services]] and [[private-note]].\n'
+            '```dataview\n'
+            'TABLE x\n'
+            '```\n'
+            '[status:: active] ==important== '
+            '<span style="color:red">red</span>\n'
+            '![[pic.png]]\n'
+        )
+    with open(f1, 'r', encoding='utf-8') as f:
+        fm, body = parse_frontmatter(f.read())
+    out1, err1 = process_note(fm, body, 'fixture.md', ctx_for())
+
+    _assert(results, err1 is None, 'fixture1: transform passes secrets scan')
+    _assert(results, 'dataview' not in out1, 'fixture1: no "dataview" in output')
+    _assert(results, 'TABLE x' not in out1, 'fixture1: no "TABLE x" in output')
+    _assert(results, '<span' not in out1 and '</span>' not in out1,
+            'fixture1: HTML span tags removed')
+    _assert(results, 'red' in out1, 'fixture1: inner text "red" kept')
+    _assert(results, '[our-hosted-services](/kb/our-hosted-services)' in out1,
+            'fixture1: published wikilink -> /kb/ markdown link')
+    _assert(results, 'private-note' in out1
+            and '[[private-note]]' not in out1
+            and '(/kb/private-note)' not in out1,
+            'fixture1: unpublished wikilink -> plain text')
+    _assert(results, 'active' in out1
+            and '[status:: active]' not in out1
+            and 'status' not in out1,
+            'fixture1: inline field [status:: active] -> "active"')
+    _assert(results, 'important' in out1 and '==important==' not in out1,
+            'fixture1: highlight ==important== -> "important"')
+    _assert(results, '![](/kb/attachments/pic.png)' in out1,
+            'fixture1: embed -> /kb/attachments/pic.png')
+
+    # ---- Fixture 2: secrets, MARKED (must be stripped, transform succeeds) ----
+    f2 = os.path.join(tmp, 'fixture-marked.md')
+    with open(f2, 'w', encoding='utf-8') as f:
+        f.write(
+            '---\n'
+            'title: Marked\n'
+            'wiki: true\n'
+            '---\n'
+            '# Credentials\n'
+            '%%wiki-strip%%\n'
+            'Admin console login:\n'
+            'Password: Tr0ubadour-Sekret-9xZ\n'
+            'client_secret: abcdEF1234567890XYZ+/=\n'
+            '%%wiki-strip-end%%\n'
+            'Public info here.\n'
+        )
+    with open(f2, 'r', encoding='utf-8') as f:
+        fm, body = parse_frontmatter(f.read())
+    out2, err2 = process_note(fm, body, 'fixture-marked.md', ctx_for())
+
+    _assert(results, err2 is None, 'fixture2: marked note transforms without refusal')
+    _assert(results, 'Tr0ubadour' not in out2, 'fixture2: stripped password absent')
+    _assert(results, 'client_secret' not in out2, 'fixture2: stripped client_secret absent')
+    _assert(results, 'Public info here.' in out2, 'fixture2: unmarked content retained')
+
+    # ---- Fixture 3: secrets, UNMARKED (must be REFUSED) ----
+    f3 = os.path.join(tmp, 'fixture-unmarked.md')
+    with open(f3, 'w', encoding='utf-8') as f:
+        f.write(
+            '---\n'
+            'title: Unmarked\n'
+            'wiki: true\n'
+            '---\n'
+            '# Credentials\n'
+            'Password: hunter2secretlongtoken\n'
+            '\n'
+            '| Service | Password |\n'
+            '|---------|----------|\n'
+            '| admin   | pw123    |\n'
+        )
+    with open(f3, 'r', encoding='utf-8') as f:
+        fm, body = parse_frontmatter(f.read())
+    out3, err3 = process_note(fm, body, 'fixture-unmarked.md', ctx_for())
+
+    _assert(results, err3 is not None, 'fixture3: unmarked secret is REFUSED')
+    _assert(results, err3 is not None and 'password' in err3.lower(),
+            'fixture3: refusal names the offending pattern')
+    _assert(results, 'hunter2secretlongtoken' not in out3 or err3 is not None,
+            'fixture3: nothing published on refusal')
+
+    # ---- Fixture 4 (I-1): UNMARKED all-lowercase-hex token -> REFUSED ----
+    # 40-char lowercase hex (fake sha-like) that the old mixed-case rule missed.
+    f4 = os.path.join(tmp, 'fixture-hex.md')
+    with open(f4, 'w', encoding='utf-8') as f:
+        f.write(
+            '---\ntitle: Hex\nwiki: true\n---\n'
+            '# Token\n'
+            'Api token: a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0\n')
+    with open(f4, 'r', encoding='utf-8') as f:
+        fm, body = parse_frontmatter(f.read())
+    _, err4 = process_note(fm, body, 'fixture-hex.md', ctx_for())
+    _assert(results, err4 is not None,
+            'fixture4 (I-1): unmarked lowercase-hex token (>=20) is REFUSED')
+
+    # ---- Fixture 5 (I-1): UNMARKED lowercase-alnum token -> REFUSED ----
+    # The proven bypass: all-lowercase alphanumeric, 19 chars, digit+letter mix.
+    f5 = os.path.join(tmp, 'fixture-alnum.md')
+    with open(f5, 'w', encoding='utf-8') as f:
+        f.write(
+            '---\ntitle: Alnum\nwiki: true\n---\n'
+            '# Token\n'
+            'Key is abcdef1234567890xyz for the service.\n')
+    with open(f5, 'r', encoding='utf-8') as f:
+        fm, body = parse_frontmatter(f.read())
+    _, err5 = process_note(fm, body, 'fixture-alnum.md', ctx_for())
+    _assert(results, err5 is not None,
+            'fixture5 (I-1): unmarked lowercase-alnum token abcdef1234567890xyz '
+            'is REFUSED')
+
+    # ---- Fixture 6 (I-1 regression): ordinary prose is NOT refused ----
+    # Plain words + a dotted hostname + a /kb/<slug> link must NOT false-positive.
+    f6 = os.path.join(tmp, 'fixture-prose.md')
+    with open(f6, 'w', encoding='utf-8') as f:
+        f.write(
+            '---\ntitle: Prose\nwiki: true\n---\n'
+            '# Guide\n'
+            'Our media server lives at jellyfin.obsidianbay.net and the setup '
+            'documentation is over at /kb/foo for anyone who needs it.\n')
+    with open(f6, 'r', encoding='utf-8') as f:
+        fm, body = parse_frontmatter(f.read())
+    _, err6 = process_note(fm, body, 'fixture-prose.md', ctx_for())
+    _assert(results, err6 is None,
+            'fixture6 (I-1 regression): prose + hostname + /kb/ link NOT refused')
+
+    # ---- Fixture 7 (I-2): refused publish publishes NOTHING (real publish path) ----
+    # Fully OFFLINE: the leaky note is refused in phase 1 (the secrets scan),
+    # before any token check or network call — so no WIKIJS_TOKEN is needed and
+    # no GraphQL request is ever made.
+    vroot = tempfile.mkdtemp(prefix='note2wiki-vault.')
+    rroot = tempfile.mkdtemp(prefix='note2wiki-repo.')
+    with open(os.path.join(vroot, 'clean-note.md'), 'w', encoding='utf-8') as f:
+        f.write('---\ntitle: Clean\nwiki: true\n---\n'
+                '# Clean\n![[diagram.png]]\nAll public info here.\n')
+    with open(os.path.join(vroot, 'diagram.png'), 'wb') as f:
+        f.write(b'\x89PNG\r\n\x1a\n-fake-image-bytes-')
+    with open(os.path.join(vroot, 'leaky-note.md'), 'w', encoding='utf-8') as f:
+        f.write('---\ntitle: Leaky\nwiki: true\n---\n'
+                '# Leaky\nApi key: abcdef1234567890xyz here.\n')
+
+    kb_dir = os.path.join(rroot, 'kb')
+    manifest7 = os.path.join(rroot, '.note2wiki-manifest.json')
+    subprocess.run(['git', 'init', '-q', rroot], check=False,
+                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+    bin_path = os.environ.get('NOTE2WIKI_SELF_BIN')
+    if bin_path and os.path.exists(bin_path):
+        # Full bash path: refusal must abort (set -e) before any publish/commit.
+        env = dict(os.environ)
+        env['NOTE2WIKI_VAULT'] = vroot
+        env['NOTE2WIKI_MANIFEST'] = manifest7   # keep the real manifest untouched
+        env.pop('NOTE2WIKI_SELF_BIN', None)
+        proc = subprocess.run([bin_path, '--publish'], env=env,
+                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        rc = proc.returncode
+    else:
+        # Fallback: exercise the Python publish() function directly.
+        rc = publish(vroot, manifest7)
+
+    md_exists = os.path.exists(os.path.join(kb_dir, 'clean-note.md'))
+    img_exists = os.path.exists(os.path.join(kb_dir, 'attachments', 'diagram.png'))
+    manifest_exists = os.path.exists(manifest7)
+    rev = subprocess.run(['git', '-C', rroot, 'rev-list', '--count', '--all'],
+                         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    ncommits = (rev.stdout.decode().strip() or '0')
+
+    _assert(results, rc != 0,
+            'fixture7 (I-2): publish refuses with non-zero exit on unmarked secret')
+    _assert(results, not md_exists,
+            'fixture7 (I-2): refused publish left NO clean-note.md in repo')
+    _assert(results, not img_exists,
+            'fixture7 (I-2): refused publish left NO image attachment in repo')
+    _assert(results, not manifest_exists,
+            'fixture7 (I-2): refused publish wrote NO manifest')
+    _assert(results, ncommits == '0',
+            'fixture7 (I-2): refusal aborted before any git commit')
+
+    shutil.rmtree(vroot, ignore_errors=True)
+    shutil.rmtree(rroot, ignore_errors=True)
+
+    # ---- report ----
+    npass = sum(1 for ok, _ in results if ok)
+    ntot = len(results)
+    for ok, desc in results:
+        print('  [%s] %s' % ('PASS' if ok else 'FAIL', desc))
+    print('\nnote2wiki --self-test-all: %d/%d assertions pass' % (npass, ntot))
+    shutil.rmtree(tmp, ignore_errors=True)
+    return 0 if npass == ntot else 1
+
+
+def main():
+    a = sys.argv[1:]
+    if not a:
+        sys.stderr.write('internal: no mode\n')
+        return 2
+    mode = a[0]
+    if mode == '--self-test-all':
+        return selftest_all()
+    if mode == '--self-test':
+        if len(a) < 2:
+            sys.stderr.write('usage: --self-test <file>\n')
+            return 2
+        return selftest_single(a[1])
+    if mode == '--dry-run':
+        return publish(a[1], a[2], dry_run=True)
+    if mode == '--publish':
+        return publish(a[1], a[2], dry_run=False)
+    sys.stderr.write('internal: unknown mode %s\n' % mode)
+    return 2
+
+
+if __name__ == '__main__':
+    sys.exit(main())
+PYEOF
+
+# ---------------------------------------------------------------------------
+# Bash dispatch.
+# ---------------------------------------------------------------------------
+
+# Resolve WIKIJS_URL / WIKIJS_TOKEN: environment wins; otherwise fall back to
+# KEY=VALUE lines in $CONFIG (mode 600). Exported for the Python subprocess.
+# Token resolution order: WIKIJS_TOKEN, then WIKIJS_API_KEY (Anthony exports
+# this in his shell), then the config file's WIKIJS_TOKEN.
+resolve_config() {
+    if [ -z "${WIKIJS_TOKEN:-}" ] && [ -n "${WIKIJS_API_KEY:-}" ]; then
+        WIKIJS_TOKEN="$WIKIJS_API_KEY"
+    fi
+    if [ -f "$CONFIG" ]; then
+        local line k v
+        while IFS= read -r line || [ -n "$line" ]; do
+            case "$line" in ''|\#*) continue ;; esac
+            k="${line%%=*}"
+            v="${line#*=}"
+            case "$k" in
+                WIKIJS_URL)   if [ -z "${WIKIJS_URL:-}" ];   then WIKIJS_URL="$v";   fi ;;
+                WIKIJS_TOKEN) if [ -z "${WIKIJS_TOKEN:-}" ]; then WIKIJS_TOKEN="$v"; fi ;;
+            esac
+        done < "$CONFIG"
+    fi
+    export WIKIJS_URL="${WIKIJS_URL:-}"
+    export WIKIJS_TOKEN="${WIKIJS_TOKEN:-}"
+}
+
+mode="${1:-}"
+case "$mode" in
+    --self-test-all)
+        # Expose this script to the harness so it can exercise the full bash
+        # publish path (I-2) via subprocess with env-overridden paths. Stays
+        # OFFLINE: the harness's leaky fixture is refused before any API call.
+        NOTE2WIKI_SELF_BIN="$0" python3 -c "$PYSRC" --self-test-all
+        ;;
+    --self-test)
+        [ $# -ge 2 ] || { echo "usage: note2wiki --self-test <file>" >&2; exit 2; }
+        python3 -c "$PYSRC" --self-test "$2"
+        ;;
+    --dry-run)
+        [ -d "$VAULT" ] || { echo "vault not found: $VAULT" >&2; exit 1; }
+        resolve_config
+        python3 -c "$PYSRC" --dry-run "$VAULT" "$MANIFEST"
+        ;;
+    ""|--publish)
+        [ -d "$VAULT" ] || { echo "vault not found: $VAULT" >&2; exit 1; }
+        resolve_config
+        python3 -c "$PYSRC" --publish "$VAULT" "$MANIFEST"
+        ;;
+    -h|--help)
+        sed -n '3,20p' "$0"
+        ;;
+    *)
+        echo "note2wiki: unknown option '$mode' (see --help)" >&2
+        exit 2
+        ;;
+esac
