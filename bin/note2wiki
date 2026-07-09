@@ -153,7 +153,7 @@ def replace_embeds(text, ctx):
         if ext in IMG_EXT:
             if not ctx.get('self_test'):
                 ctx.setdefault('attachments', []).append(base)
-            return '![](/kb/attachments/%s)' % base
+            return '![](/en/kb/attachments/%s)' % base
         return m.group(0)
     return re.sub(r'!\[\[([^\]]+)\]\]', repl, text)
 
@@ -166,7 +166,7 @@ def replace_wikilinks(text, published):
         alias = parts[1].strip() if len(parts) > 1 else target
         slug = slugify(os.path.basename(target.split('#')[0]))
         if slug in published:
-            return '[%s](/kb/%s)' % (alias, slug)
+            return '[%s](/en/kb/%s)' % (alias, slug)
         return alias
     return re.sub(r'\[\[([^\]]+)\]\]', repl, text)
 
@@ -652,10 +652,11 @@ def selftest_all():
     _assert(results, '<span' not in out1 and '</span>' not in out1,
             'fixture1: HTML span tags removed')
     _assert(results, 'red' in out1, 'fixture1: inner text "red" kept')
-    _assert(results, '[our-hosted-services](/kb/our-hosted-services)' in out1,
-            'fixture1: published wikilink -> /kb/ markdown link')
+    _assert(results, '[our-hosted-services](/en/kb/our-hosted-services)' in out1,
+            'fixture1: published wikilink -> /en/kb/ markdown link')
     _assert(results, 'private-note' in out1
             and '[[private-note]]' not in out1
+            and '(/en/kb/private-note)' not in out1
             and '(/kb/private-note)' not in out1,
             'fixture1: unpublished wikilink -> plain text')
     _assert(results, 'active' in out1
@@ -664,8 +665,8 @@ def selftest_all():
             'fixture1: inline field [status:: active] -> "active"')
     _assert(results, 'important' in out1 and '==important==' not in out1,
             'fixture1: highlight ==important== -> "important"')
-    _assert(results, '![](/kb/attachments/pic.png)' in out1,
-            'fixture1: embed -> /kb/attachments/pic.png')
+    _assert(results, '![](/en/kb/attachments/pic.png)' in out1,
+            'fixture1: embed -> /en/kb/attachments/pic.png')
 
     # ---- Fixture 2: secrets, MARKED (must be stripped, transform succeeds) ----
     f2 = os.path.join(tmp, 'fixture-marked.md')
