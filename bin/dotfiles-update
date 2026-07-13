@@ -93,4 +93,23 @@ if [[ -d "$HOME/.gnupg" ]]; then
     find "$HOME/.gnupg" -type d -exec chmod 700 {} +
 fi
 
+# On a GRAPHICAL box, a zsh login shell black-screens the desktop on the next reboot: the
+# session launcher runs the login shell with no controlling terminal and zsh's p10k instant
+# prompt blocks it, so the desktop never starts. The tracked .zshrc now guards against that,
+# but the login shell is user state this script does not own — and one hand-run `chsh` has
+# already cost an evening. Warn, every update, until it's put back.
+login_shell="$(getent passwd "$(id -un)" 2>/dev/null | cut -d: -f7)"
+if [[ "${login_shell##*/}" == "zsh" ]] && systemctl get-default 2>/dev/null | grep -q graphical; then
+    cat >&2 <<EOF
+
+  !! WARNING: your LOGIN shell is zsh on a graphical machine.
+     This has caused a permanent black screen over RDP after reboot. Put it back:
+
+         sudo chsh -s /bin/bash $(id -un)
+
+     You lose nothing: .bashrc execs zsh for every interactive terminal.
+
+EOF
+fi
+
 echo "done." >&2

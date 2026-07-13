@@ -1,7 +1,16 @@
+# --- Non-interactive guard. Keep this FIRST; nothing may run above it. ---------------
+# A desktop session launcher (SDDM greeter, xrdp-sesman) starts the session through the
+# user's login shell in a context with no controlling terminal. If that shell is zsh and
+# this file does console I/O, the launcher blocks in poll() and the desktop NEVER starts:
+# a permanent black screen over RDP, recoverable only by ssh. p10k's instant prompt below
+# is exactly such console I/O. Bail out unless we are a real interactive shell.
+[[ -o interactive ]] || return
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+# The -t 0/-t 1 tty test is the second half of the guard above — belt and braces.
+if [[ -t 0 && -t 1 && -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 

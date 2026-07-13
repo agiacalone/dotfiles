@@ -94,3 +94,13 @@ NNTPSERVER='news.eternal-september.org' && export NNTPSERVER
 #source $HOME/.aliases
 [ -f "$HOME/.aliases.local" ] && source "$HOME/.aliases.local"
 
+# --- zsh for interactive terminals; bash stays the LOGIN shell. Keep this LAST. -------
+# On a GUI box (desktop VM reached over RDP) the LOGIN shell must stay bash: the session
+# launcher runs the login shell to start the desktop, and zsh-as-login-shell has hung that
+# launch before -> permanent black screen (see bin/vm-provision-rdp.sh). So do NOT
+# `chsh -s zsh` there; exec zsh here instead and every terminal still lands in zsh.
+# Safe because this only fires for INTERACTIVE bash — the session launch is not.
+if [[ $- == *i* && -z "${ZSH_VERSION:-}" ]] && command -v zsh >/dev/null 2>&1; then
+    exec zsh
+fi
+
