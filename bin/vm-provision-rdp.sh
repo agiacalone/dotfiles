@@ -90,9 +90,37 @@ sudo systemctl enable --now sshd
 sudo firewall-cmd --permanent --add-service=ssh >/dev/null
 sudo firewall-cmd --reload >/dev/null
 
+# 7. AUDIO over RDP (sound out AND mic in). xrdp already carries an audio channel
+#    (allow_channels=true, xrdp-chansrv opens the sockets) — what's missing is a sink to
+#    feed it, so without this the default sink is `auto_null` and every sound is discarded.
+#
+#    ==Do NOT reach for `pulseaudio-module-xrdp`.== That is a native PulseAudio C module,
+#    and pipewire-pulse CANNOT load it — it emulates PulseAudio's API but never dlopen()s
+#    PA modules. Fedora is PipeWire, so the correct component is neutrinolabs'
+#    pipewire-module-xrdp. Neither is packaged in Fedora; this builds from source.
+#
+#    ==LOCALLY BUILT → no updater refreshes it.== It links against the PipeWire ABI, so a
+#    major PipeWire upgrade may require re-running this. Same category as the Doom engines
+#    and the custom Wolf apps: if audio dies after a big update, rebuild here first.
+if [ ! -f /usr/lib64/pipewire-0.3/libpipewire-module-xrdp.so ]; then
+  echo "-- building pipewire-module-xrdp (RDP audio) --"
+  sudo dnf install -y git gcc make autoconf libtool automake pkgconf-pkg-config pipewire-devel
+  tmp="$(mktemp -d)"
+  git clone --depth 1 https://github.com/neutrinolabs/pipewire-module-xrdp.git "$tmp/pw-xrdp"
+  ( cd "$tmp/pw-xrdp" && ./bootstrap && ./configure && make -j"$(nproc)" && sudo make install )
+  rm -rf "$tmp"
+fi
+#    `make install` drops an XDG autostart hook (/etc/xdg/autostart/pipewire-xrdp.desktop)
+#    that loads the module into each new RDP session. It is gated on $XRDP_SESSION, so it
+#    is inert on a console/ssh login — it only fires inside an actual xrdp session.
+#    ==An EXISTING session won't pick it up: log out and back in (a reconnect reuses the
+#    same session and will NOT re-run autostart).==
+
 echo
 echo "== done. xrdp: $(systemctl is-active xrdp) on $(hostname) =="
 echo "   Log in over RDP as your Fedora user (session: Xorg)."
+echo "   Audio: log OUT and back IN, then \`pactl info\` should show Default Sink: xrdp-sink"
+echo "   (if it says auto_null, the module didn't load — check \$XRDP_SESSION is set)."
 echo
 echo "IMPORTANT — do NOT run a local console desktop session for the SAME user while using"
 echo "RDP. KDE allows only one Plasma session per user; a leftover console (autologin, or a"
