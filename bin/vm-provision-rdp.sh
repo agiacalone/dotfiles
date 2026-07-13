@@ -21,8 +21,11 @@ sudo dnf install -y xrdp xorgxrdp plasma-workspace-x11
 printf '#!/bin/bash\nexec startplasma-x11\n' > "$HOME/.xsession"
 chmod +x "$HOME/.xsession"
 
-# 3. If KRdp was ever enabled, stop it fighting xrdp for port 3389.
-systemctl --user stop  app-org.kde.krdpserver.service 2>/dev/null || true
+# 3. If KRdp was ever enabled, stop it fighting xrdp for port 3389. Editing krdpserverrc
+#    is NOT enough — the systemd *user unit* stays enabled and fails on every boot, so
+#    disable the unit too.
+systemctl --user disable --now app-org.kde.krdpserver.service 2>/dev/null || true
+systemctl --user reset-failed app-org.kde.krdpserver.service 2>/dev/null || true
 [ -f "$HOME/.config/krdpserverrc" ] && \
   sed -i 's/Autostart=true/Autostart=false/; s/SystemUserEnabled=true/SystemUserEnabled=false/' \
       "$HOME/.config/krdpserverrc" || true
@@ -55,6 +58,26 @@ polkit.addRule(function(action, subject) {
 });
 POLKIT
 command -v flatpak >/dev/null && sudo flatpak remote-modify --system flathub --no-filter 2>/dev/null || true
+
+# 5c. ==The KDE "Restart"/"Shut Down" menu HANGS over RDP and black-screens the box.==
+#     An RDP session is not a local seat (logind: Seat="" Remote=yes), so
+#     org.freedesktop.login1.reboot resolves to auth_admin_keep -> admin password prompt.
+#     But Plasma's shutdown sequence STOPS plasma-polkit-agent.service while tearing the
+#     session down, so that prompt can never be answered: plasma-shutdown blocks in poll()
+#     forever, kwin is already dead, and you get a BLACK SCREEN on a box that never
+#     rebooted -- and xrdp reconnects you to the corpse session, so it looks permanent.
+#     (Cost an evening on 2026-07-13; it was misdiagnosed as "reboot broke the VM".)
+#     Let wheel do login1 actions unprompted. Not a real loosening: anyone who can log in
+#     can already `sudo reboot`. This just makes the menu tell the truth.
+sudo tee /etc/polkit-1/rules.d/49-login1-no-password.rules >/dev/null <<'POLKIT'
+polkit.addRule(function(action, subject) {
+    if (action.id.indexOf("org.freedesktop.login1.") == 0 &&
+        subject.isInGroup("wheel")) {
+        return polkit.Result.YES;
+    }
+});
+POLKIT
+sudo systemctl restart polkit
 
 # 6. Enable xrdp + sesman at boot, open the guest firewall.
 sudo systemctl enable --now xrdp xrdp-sesman

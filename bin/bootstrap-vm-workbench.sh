@@ -60,7 +60,7 @@ cat <<EOF
   Connect:  Microsoft Remote Desktop -> <host-ip>[:PORT], session Xorg, your Fedora user.
   Recover:  ssh into it. A black screen is ALWAYS diagnosable over ssh; that is why it's on.
 
-Two rules, both learned the hard way (notes/desktop-vm-on-reason.md):
+Three rules, all learned the hard way (notes/desktop-vm-on-reason.md):
 
   1. Do NOT 'chsh -s zsh'. The login shell stays BASH or the desktop black-screens on the
      next reboot. You still get zsh in every terminal — .bashrc execs it. Nothing is lost.
@@ -68,6 +68,12 @@ Two rules, both learned the hard way (notes/desktop-vm-on-reason.md):
      warnings in the xrdp log. They are harmless. Plasma falls back on its own. Every one
      of those env vars has turned a WORKING desktop black, and they persist across
      reconnects (systemd user manager), so only a guest reboot clears them.
+  3. A BLACK SCREEN IS USUALLY A HUNG SESSION, NOT A BROKEN VM. xrdp reconnects you to the
+     SAME session, so a hung one looks permanent. ssh in and check: if startplasma-x11 is
+     alive but kwin_x11/plasmashell are gone, the session is a corpse — reboot for real
+     (ssh 'sudo systemctl reboot'), don't go hunting for config to "fix".
+     This script installs the polkit rule that makes the KDE Restart menu work over RDP;
+     without it, clicking Restart is itself what hangs the session.
 
 Still to do on the HOST: pin this guest's IP, DNAT a host port -> ${NEW_HOSTNAME}:3389.
 EOF
